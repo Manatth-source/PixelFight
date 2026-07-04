@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Элементы решения/" />
+  <Project Path="PixelFight.vcxproj" Id="8cafc8e8-d6f1-45f4-8305-ac379b728201" />
+</Solution>

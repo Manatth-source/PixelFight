@@ -1,0 +1,11 @@
+﻿x64/
+x86/
+Debug/
+Release/
+.vs/
+*.user
+vcpkg_installed/
+*.obj
+*.pdb
+*.ilk
+*.log
