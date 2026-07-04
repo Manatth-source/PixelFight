@@ -1,19 +1,19 @@
 #pragma once
 
-#include "Utils/ResourceManager.h"
 #include <SFML/Graphics.hpp>
-#include <optional>
-#include <iostream>
+#include <memory>
+#include "Utils/ResourceManager.h"
+#include "Player/Samurai.h"
 
-class Game 
+
+class Game
 {
 private:
 	sf::RenderWindow window_;
-	ResourceManager resourceManager;
-	std::optional<sf::Sprite> sprite_;
 	sf::Clock clock_;
+	ResourceManager resourceManager_;
+	std::unique_ptr<Character> player1_;
 
-	bool reverseMode_ = false;
 public:
 	Game();
 
