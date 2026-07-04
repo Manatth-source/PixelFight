@@ -6,11 +6,7 @@ Game::Game() {
 		"PixelFight"
 	);
 
-	if (!texture_.loadFromFile("Assets/Sprites/test_character.png")) {
-		std::cout << "<<<!!! Texture was not loaded !!!>>>" << std::endl;
-	}
-
-	sprite_.emplace(texture_);
+	sprite_.emplace(resourceManager.getTexture("Assets/Sprites/test_character.png"));
 	sprite_->setScale({0.6f, 0.6f});
 	sprite_->setPosition({ 300.f, 100.f });
 }

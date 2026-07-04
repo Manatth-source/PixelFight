@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "Utils/ResourceManager.h"
+#include "Utils/ResourceManager.h"
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <iostream>
@@ -9,7 +9,7 @@ class Game
 {
 private:
 	sf::RenderWindow window_;
-	sf::Texture texture_;
+	ResourceManager resourceManager;
 	std::optional<sf::Sprite> sprite_;
 	sf::Clock clock_;
 
