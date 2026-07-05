@@ -1,7 +1,9 @@
 #include "Game/Game.h"
 
 
-int main(void) {
+ int main(void) {
 	Game game;
 	game.run();
+
+	return 0;
 }

@@ -12,7 +12,7 @@ private:
 	sf::RenderWindow window_;
 	sf::Clock clock_;
 	ResourceManager resourceManager_;
-	std::unique_ptr<Character> player1_;
+	std::unique_ptr<Character> player_;
 
 public:
 	Game();
