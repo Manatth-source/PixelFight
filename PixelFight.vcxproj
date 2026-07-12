@@ -20,14 +20,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game\Game.cpp" />
+    <ClCompile Include="src\Graphics\Animation.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Player\Character.cpp" />
+    <ClCompile Include="src\Player\Goblin.cpp" />
     <ClCompile Include="src\Player\Samurai.cpp" />
     <ClCompile Include="src\Utils\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\Constants.h" />
     <ClInclude Include="include\Game\Game.h" />
+    <ClInclude Include="include\Graphics\Animation.h" />
     <ClInclude Include="include\Player\Character.h" />
+    <ClInclude Include="include\Player\Goblin.h" />
     <ClInclude Include="include\Player\Samurai.h" />
     <ClInclude Include="include\Utils\ResourceManager.h" />
   </ItemGroup>

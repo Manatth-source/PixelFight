@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <string>
+#include "Core/Constants.h"
 
 
 class ResourceManager

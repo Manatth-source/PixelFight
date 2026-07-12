@@ -4,6 +4,8 @@
 #include <memory>
 #include "Utils/ResourceManager.h"
 #include "Player/Samurai.h"
+#include "Player/Goblin.h"
+#include "Core/Constants.h"
 
 
 class Game
