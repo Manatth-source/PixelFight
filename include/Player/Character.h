@@ -11,7 +11,7 @@ class Character
 private:
 	void updateAnimationState();
 
-	void damage(int value);
+	void takeDamage(int value);
 
 protected:
 	std::optional<sf::Sprite> sprite_;
@@ -21,6 +21,8 @@ protected:
 	sf::Vector2f position_;
 
 	int health_;
+	bool isAlive_;
+
 	float speed_;
 
 	float dashCooldown_;

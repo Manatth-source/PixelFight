@@ -6,8 +6,9 @@
 Character::Character(const sf::Texture& texture)
 	: sprite_(texture)
 	, animation_(*sprite_)
-	, position_({Constants::Player::PositionX, Constants::Player::PositionY})
+	, position_({ Constants::Player::PositionX, Constants::Player::PositionY })
 	, health_(100)
+	, isAlive_(true)
 	, speed_(Constants::Player::Speed)
 	, dashCooldown_(Constants::Player::Dash_cooldown)
 	, dashCooldownTimer_(0.0f)
@@ -78,7 +79,11 @@ Character::~Character()
 
 void Character::updateAnimationState() 
 {
-	if (isCrouching_) {
+	if (!isAlive_) {
+		speed_ = 0;
+		//animation_.play("Dead");
+	}
+	else if (isCrouching_) {
 		speed_ = Constants::Player::SpeedSit;
 		animation_.play("Sit");
 	}
@@ -94,9 +99,10 @@ void Character::updateAnimationState()
 }
 
 
-void Character::damage(int value) 
+void Character::takeDamage(int value) 
 {
 	this->health_ = std::max(health_ - value, 0);
+	if (health_ == 0) isAlive_ = false;
 }
 
 
