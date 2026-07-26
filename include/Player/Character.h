@@ -11,8 +11,6 @@ class Character
 private:
 	void updateAnimationState();
 
-	void takeDamage(int value);
-
 protected:
 	std::optional<sf::Sprite> sprite_;
 
@@ -25,9 +23,9 @@ protected:
 
 	float speed_;
 
+	//Dach
 	float dashCooldown_;
 	float dashCooldownTimer_;
-
 	sf::RectangleShape dashIndicator_;
 
 	// Jump
@@ -43,6 +41,15 @@ protected:
 	//Move
 	bool isMoving_;
 
+	//Attack
+	sf::RectangleShape attackHitbox_;
+	bool isAttacking_;
+	bool hasHitThisAttack_;
+	float attackTimer_;
+	float attackDuration_;
+	float attackCooldown_;
+	float attackCooldownTimer_;
+	int attackDamage_;
 
 public:
 	Character(const sf::Texture& texture);
@@ -52,6 +59,9 @@ public:
 
 	virtual void render(sf::RenderWindow& window);
 
+	void setPosition(float x, float y);
+
+	//Move
 	void moveLeft(float deltaTime);
 	void moveRight(float deltaTime);
 
@@ -59,15 +69,30 @@ public:
 	void dashRight();
 	void updateCooldowns(float deltaTime);
 
+	//Jump
 	void jump();
 	void updatePhysics(float deltaTime);
 
+	//Sit
 	void setCrouching(bool crouching);
 
+	//Attack
+	//---
 	virtual void passive_skill();
 	virtual void first_skill();
 	virtual void second_skill();
 	virtual void ultimate();
+
+	void attack();
+	sf::FloatRect getAttackHitbox() const;
+	sf::FloatRect getBodyBounds() const;
+
+	bool hasHitThisAttack() const;
+	void markHit();
+
+	void takeDamage(int value);
+	bool isAlive() const;
+	//---
 
 	void setMoving(bool moving);
 };

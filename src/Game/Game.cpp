@@ -16,6 +16,8 @@ Game::Game()
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
 	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin.png"));
+	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin.png"));
+	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
 }
 
 //--------------------------------------------------------------------------
@@ -58,6 +60,11 @@ void Game::processEvents()
 			if (keyPressed->code == sf::Keyboard::Key::W || keyPressed->code == sf::Keyboard::Key::Space) {
 				player_->jump();
 			}
+			//Attack
+			if (keyPressed->code == sf::Keyboard::Key::F) {
+				player_->attack();
+
+			}
 		}
 	}
 }
@@ -87,6 +94,24 @@ void Game::update(float deltaTime)
 	player_->setCrouching(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl));
 
 	player_->update(deltaTime);
+
+
+//*********************************************
+	player2_->updateCooldowns(deltaTime);
+	player2_->updatePhysics(deltaTime);
+	player2_->update(deltaTime);
+//*********************************************
+
+	//Attack
+	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value() ) {
+		player2_->takeDamage(10);
+		player_->markHit();
+	}
+
+	if (!player2_->hasHitThisAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value() ) {
+		player_->takeDamage(10);
+		player2_->markHit();
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -96,7 +121,9 @@ void Game::render()
 	window_.clear(sf::Color::Cyan);
 
 	window_.draw(ground_);
+
 	player_->render(window_);
+	player2_->render(window_);
 
 	window_.display();
 }

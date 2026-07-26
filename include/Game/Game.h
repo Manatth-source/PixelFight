@@ -15,7 +15,9 @@ private:
 	sf::RectangleShape ground_;
 	sf::Clock clock_;
 	ResourceManager resourceManager_;
+
 	std::unique_ptr<Character> player_;
+	std::unique_ptr<Character> player2_;
 
 public:
 	Game();

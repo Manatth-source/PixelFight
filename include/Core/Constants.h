@@ -3,8 +3,8 @@
 namespace Constants
 {
     namespace Window {
-        constexpr unsigned Width = 1280;
-        constexpr unsigned Height = 720;
+        constexpr unsigned int Width = 1280;
+        constexpr unsigned int Height = 720;
     }
     namespace Player {
         constexpr float Speed = 200.f;

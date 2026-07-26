@@ -17,6 +17,12 @@ Character::Character(const sf::Texture& texture)
 	, groundY_(Constants::Player::PositionY)
 	, gravity_(1500.f)
 	, jumpStrength_(-600.f)
+	, isAttacking_(false)
+	, attackTimer_(0.f)
+	, attackDuration_(0.2f)
+	, attackCooldown_(1.0f)
+	, attackCooldownTimer_(0.f)
+	, attackDamage_(10)
 {
 
 	sprite_->setScale({ 1.1f, 1.1f });
@@ -81,7 +87,7 @@ void Character::updateAnimationState()
 {
 	if (!isAlive_) {
 		speed_ = 0;
-		//animation_.play("Dead");
+		animation_.play("Dead");
 	}
 	else if (isCrouching_) {
 		speed_ = Constants::Player::SpeedSit;
@@ -99,16 +105,10 @@ void Character::updateAnimationState()
 }
 
 
-void Character::takeDamage(int value) 
-{
-	this->health_ = std::max(health_ - value, 0);
-	if (health_ == 0) isAlive_ = false;
-}
-
-
 //--------------------------------------------------------------------------
 
-void Character::update(float deltaTime) {
+void Character::update(float deltaTime) 
+{
 	speed_ = Constants::Player::Speed;
 	updateAnimationState();
 	animation_.update(deltaTime);
@@ -120,6 +120,14 @@ void Character::render(sf::RenderWindow& window)
 {
 	window.draw(*sprite_);
 	window.draw(dashIndicator_);
+}
+
+//--------------------------------------------------------------------------
+
+void Character::setPosition(float x, float y)
+{
+	position_ = { x, y };
+	sprite_->setPosition(position_);
 }
 
 //--------------------------------------------------------------------------
@@ -175,6 +183,7 @@ void Character::dashRight()
 
 void Character::updateCooldowns(float deltaTime) 
 {
+	//Dach
 	if (dashCooldownTimer_ > 0.f) {
 		dashCooldownTimer_ -= deltaTime;
 
@@ -182,6 +191,18 @@ void Character::updateCooldowns(float deltaTime)
 	}
 	else {
 		dashIndicator_.setFillColor(sf::Color::Green);
+	}
+
+	//Attack
+	if (attackCooldownTimer_ > 0.f) {
+		attackCooldownTimer_ -= deltaTime;
+	}
+
+	if (isAttacking_) {
+		attackTimer_ -= deltaTime;
+		if (attackTimer_ <= 0.f) {
+			isAttacking_ = false;
+		}
 	}
 }
 
@@ -239,6 +260,64 @@ void Character::second_skill()
 
 void Character::ultimate()
 {
+}
+
+//Attack
+
+void Character::attack() 
+{
+	if (attackCooldownTimer_ > 0.f) {
+		return;
+	}
+
+	isAttacking_ = true;
+	attackTimer_ = attackDuration_;
+	attackCooldownTimer_ = attackCooldown_;
+	hasHitThisAttack_ = false;
+}
+
+
+sf::FloatRect Character::getAttackHitbox() const
+{
+	if (!isAttacking_) {
+		return sf::FloatRect({ 0.f, 0.f }, { 0.f, 0.f });
+	}
+
+	float hitboxWidth = 60.f;
+	float hitboxX = position_.x + Constants::Player::Size; // We only hit to the right !!! It needs to be finalized !!!
+
+	return sf::FloatRect({ hitboxX, position_.y }, { hitboxWidth, static_cast<float>(Constants::Player::Size) });
+}
+
+
+sf::FloatRect Character::getBodyBounds() const
+{
+	return sf::FloatRect(position_, { static_cast<float>(Constants::Player::Size), static_cast<float>(Constants::Player::Size) });
+}
+
+
+bool Character::hasHitThisAttack() const
+{
+	return hasHitThisAttack_;
+}
+
+
+void Character::markHit()
+{
+	hasHitThisAttack_ = true;
+}
+
+
+void Character::takeDamage(int value)
+{
+	this->health_ = std::max(health_ - value, 0);
+	if (health_ == 0) isAlive_ = false;
+}
+
+
+bool Character::isAlive() const
+{
+	return isAlive_;
 }
 
 //--------------------------------------------------------------------------
