@@ -6,19 +6,19 @@
 Character::Character(const sf::Texture& texture)
 	: sprite_(texture)
 	, animation_(*sprite_)
-	, position_(0.f, 200.f)
+	, position_({Constants::Player::PositionX, Constants::Player::PositionY})
 	, health_(100)
 	, speed_(Constants::Player::Speed)
 	, dashCooldown_(Constants::Player::Dash_cooldown)
 	, dashCooldownTimer_(0.0f)
 	, verticalVelocity_(0.f)
 	, isOnGround_(true)
-	, groundY_(200.f)
+	, groundY_(Constants::Player::PositionY)
 	, gravity_(1500.f)
 	, jumpStrength_(-600.f)
 {
 
-	//sprite_->setScale({ 0.3f, 0.3f });
+	sprite_->setScale({ 1.1f, 1.1f });
 	sprite_->setPosition(position_);
 #if 0
 	//Idle
@@ -59,9 +59,10 @@ Character::Character(const sf::Texture& texture)
 	));
 #endif
 
-	dashIndicator_.setSize({ 70.f, 70.f });
+	// Dash Indicator
+	dashIndicator_.setSize({ 50.f, 50.f });
 	dashIndicator_.setFillColor(sf::Color::Green);
-	dashIndicator_.setPosition({ 50.f, 600.f });
+	dashIndicator_.setPosition({ 50.f, 500.f });
 
 
 }
@@ -78,6 +79,7 @@ Character::~Character()
 void Character::updateAnimationState() 
 {
 	if (isCrouching_) {
+		speed_ = Constants::Player::SpeedSit;
 		animation_.play("Sit");
 	}
 	else if (!isOnGround_) {
@@ -101,6 +103,7 @@ void Character::damage(int value)
 //--------------------------------------------------------------------------
 
 void Character::update(float deltaTime) {
+	speed_ = Constants::Player::Speed;
 	updateAnimationState();
 	animation_.update(deltaTime);
 }
@@ -124,7 +127,7 @@ void Character::moveLeft(float deltaTime)
 
 void Character::moveRight(float deltaTime) 
 {
-	position_.x = (position_.x + speed_ * deltaTime < Constants::Window::Width - 128 ? position_.x + speed_ * deltaTime : Constants::Window::Width - 128);
+	position_.x = (position_.x + speed_ * deltaTime < Constants::Window::Width - Constants::Player::Size ? position_.x + speed_ * deltaTime : Constants::Window::Width - Constants::Player::Size);
 	sprite_->setPosition(position_);
 }
 
@@ -155,7 +158,7 @@ void Character::dashRight()
 
 	position_.x = std::min(
 		position_.x + Constants::Player::Dash_distance,
-		static_cast<float>(Constants::Window::Width - 128)
+		static_cast<float>(Constants::Window::Width - Constants::Player::Size)
 	);
 
 	sprite_->setPosition(position_);

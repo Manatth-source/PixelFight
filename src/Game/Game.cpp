@@ -6,9 +6,14 @@ Game::Game()
 	window_.create(
 		sf::VideoMode({Constants::Window::Width, Constants::Window::Height}),
 		"PixelFight"
+
 	);
 
 	window_.setKeyRepeatEnabled(false);
+
+	ground_.setSize({ static_cast<float>(Constants::Window::Width), Constants::Window::Height - Constants::Player::PositionY });
+	ground_.setFillColor(sf::Color(55, 45, 38));
+	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
 	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin.png"));
 }
@@ -53,10 +58,6 @@ void Game::processEvents()
 			if (keyPressed->code == sf::Keyboard::Key::W || keyPressed->code == sf::Keyboard::Key::Space) {
 				player_->jump();
 			}
-			// squat
-			if (keyPressed->code == sf::Keyboard::Key::S) {
-				continue;
-			}
 		}
 	}
 }
@@ -92,8 +93,11 @@ void Game::update(float deltaTime)
 
 void Game::render() 
 {
-	window_.clear(sf::Color::Blue);
+	window_.clear(sf::Color::Cyan);
+
+	window_.draw(ground_);
 	player_->render(window_);
+
 	window_.display();
 }
 

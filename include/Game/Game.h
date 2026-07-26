@@ -12,6 +12,7 @@ class Game
 {
 private:
 	sf::RenderWindow window_;
+	sf::RectangleShape ground_;
 	sf::Clock clock_;
 	ResourceManager resourceManager_;
 	std::unique_ptr<Character> player_;
