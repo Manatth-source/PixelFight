@@ -4,16 +4,15 @@
 Animation::Animation(sf::Sprite& sprite)
     : sprite_(&sprite)
     , currentFrame_(0)
-    , frameTime_(0.15f)
     , timer_(0.f)
 {
 }
 
 //--------------------------------------------------------------------------
 
-void Animation::addFrame(const std::string& clipName, const sf::IntRect& frame)
+void Animation::addFrame(const std::string& clipName, const sf::IntRect& frame, float duration)
 {
-    clips_[clipName].push_back(frame);
+    clips_[clipName].push_back({ frame, duration });
 }
 
 //--------------------------------------------------------------------------
@@ -30,7 +29,7 @@ void Animation::play(const std::string& clipName)
     auto it = clips_.find(clipName);
     if (it != clips_.end() && !it->second.empty())
     {
-        sprite_->setTextureRect(it->second[0]);
+        sprite_->setTextureRect(it->second[0].rect);
     }
 }
 
@@ -46,7 +45,7 @@ void Animation::update(float deltaTime)
 
     timer_ += deltaTime;
 
-    if (timer_ >= frameTime_)
+    if (timer_ >= frames[currentFrame_].duration)
     {
         timer_ = 0.f;
         currentFrame_++;
@@ -54,6 +53,6 @@ void Animation::update(float deltaTime)
         if (currentFrame_ >= frames.size())
             currentFrame_ = 0;
 
-        sprite_->setTextureRect(frames[currentFrame_]);
+        sprite_->setTextureRect(frames[currentFrame_].rect);
     }
 }

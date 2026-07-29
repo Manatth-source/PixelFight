@@ -208,15 +208,15 @@ void Character::updateCooldowns(float deltaTime)
 
 //--------------------------------------------------------------------------
 // --------------- Jump ---------------
-void Character::jump() 
+void Character::jump()
 {
-
 	if (!isOnGround_) {
 		return;
 	}
 
 	verticalVelocity_ = jumpStrength_;
 	isOnGround_ = false;
+	jumpPhase_ = JumpPhase::Start;
 }
 
 
@@ -226,10 +226,16 @@ void Character::updatePhysics(float deltaTime)
 		verticalVelocity_ += gravity_ * deltaTime;
 		position_.y += verticalVelocity_ * deltaTime;
 
+		if (jumpPhase_ == JumpPhase::Start && verticalVelocity_ >= 0.f) {
+			jumpPhase_ = JumpPhase::Loop;
+		}
+
 		if (position_.y >= groundY_) {
 			position_.y = groundY_;
 			verticalVelocity_ = 0.f;
 			isOnGround_ = true;
+			jumpPhase_ = JumpPhase::Land;
+			jumpLandTimer_ = jumpLandDuration_;
 		}
 
 		sprite_->setPosition(position_);
@@ -314,12 +320,12 @@ void Character::takeDamage(int value)
 	if (health_ == 0) isAlive_ = false;
 }
 
-
+#if 1
 bool Character::isAlive() const
 {
 	return isAlive_;
 }
-
+#endif
 //--------------------------------------------------------------------------
 
 void Character::setMoving(bool moving)

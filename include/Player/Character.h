@@ -29,6 +29,18 @@ protected:
 	sf::RectangleShape dashIndicator_;
 
 	// Jump
+	enum class JumpPhase {
+		None,
+		Start,
+		Loop,
+		Land
+	};
+
+	JumpPhase jumpPhase_;
+
+	float jumpLandTimer_;
+	float jumpLandDuration_;
+
 	float verticalVelocity_;	// vertical speed of character at the moment
 	bool isOnGround_;
 	float groundY_;

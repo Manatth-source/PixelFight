@@ -15,9 +15,15 @@ Game::Game()
 	ground_.setFillColor(sf::Color(55, 45, 38));
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
-	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin.png"));
-	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin.png"));
+	player_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
+	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
+
+#if 1
+	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width - 700), 35.f });
+	victory_plaque_.setFillColor(sf::Color::Yellow);
+	victory_plaque_.setPosition({ 350,  Constants::Player::PositionY - 100 });
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -104,12 +110,12 @@ void Game::update(float deltaTime)
 
 	//Attack
 	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value() ) {
-		player2_->takeDamage(10);
+		player2_->takeDamage(50);
 		player_->markHit();
 	}
 
 	if (!player2_->hasHitThisAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value() ) {
-		player_->takeDamage(10);
+		player_->takeDamage(50);
 		player2_->markHit();
 	}
 }
@@ -122,8 +128,14 @@ void Game::render()
 
 	window_.draw(ground_);
 
-	player_->render(window_);
-	player2_->render(window_);
+
+	if (player_->isAlive()) player_->render(window_);
+	if (player2_->isAlive()) player2_->render(window_);
+#if 1
+	if (!player_->isAlive() || !player2_->isAlive()) 
+		window_.draw(victory_plaque_);
+#endif
+
 
 	window_.display();
 }
