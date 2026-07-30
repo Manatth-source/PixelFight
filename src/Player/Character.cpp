@@ -7,71 +7,34 @@ Character::Character(const sf::Texture& texture)
 	: sprite_(texture)
 	, animation_(*sprite_)
 	, position_({ Constants::Player::PositionX, Constants::Player::PositionY })
-	, health_(100)
+	, health_(Constants::Player::StartHealth)
 	, isAlive_(true)
 	, speed_(Constants::Player::Speed)
-	, dashCooldown_(Constants::Player::Dash_cooldown)
+	, dashCooldown_(Constants::Dash::Cooldown)
 	, dashCooldownTimer_(0.0f)
 	, verticalVelocity_(0.f)
 	, isOnGround_(true)
 	, groundY_(Constants::Player::PositionY)
-	, gravity_(1500.f)
-	, jumpStrength_(-600.f)
+	, gravity_(Constants::Jump::Gravity)
+	, jumpStrength_(Constants::Jump::Strength)
 	, isAttacking_(false)
 	, attackTimer_(0.f)
-	, attackDuration_(0.2f)
-	, attackCooldown_(1.0f)
+	, attackDuration_(Constants::Attack::Duration)
+	, attackCooldown_(Constants::Attack::Cooldown)
 	, attackCooldownTimer_(0.f)
-	, attackDamage_(10)
+	, hasHitThisAttack_(false)
+	, isCrouching_(false)
+	, isMoving_(false)
+	, jumpPhase_(JumpPhase::None)
+	, jumpLandTimer_(0.f)
+	, jumpLandDuration_(Constants::Jump::LandDuration)
 {
-
-	sprite_->setScale({ 1.1f, 1.1f });
+	sprite_->setScale({ Constants::Player::SpriteScale, Constants::Player::SpriteScale });
 	sprite_->setPosition(position_);
-#if 0
-	//Idle
-	animation_.addFrame(sf::IntRect(
-		{ 0, 0 },
-		{ 128, 128 }
-	));
 
-	animation_.addFrame(sf::IntRect(
-		{ 128, 0 },
-		{ 128, 128 }
-	));
-
-	animation_.addFrame(sf::IntRect(
-		{ 256, 0 },
-		{ 128, 128 }
-	));
-//#endif
-	//Walk
-	animation_.addFrame(sf::IntRect(
-		{ 386, 0 },
-		{ 128, 128 }
-	));
-
-	animation_.addFrame(sf::IntRect(
-		{ 514, 0 },
-		{ 128, 128 }
-	));
-
-	animation_.addFrame(sf::IntRect(
-		{ 642, 0 },
-		{ 128, 128 }
-	));
-
-	animation_.addFrame(sf::IntRect(
-		{ 770, 0 },
-		{ 128, 128 }
-	));
-#endif
-
-	// Dash Indicator
-	dashIndicator_.setSize({ 50.f, 50.f });
+	dashIndicator_.setSize({ Constants::Dash::IndicatorSize, Constants::Dash::IndicatorSize });
 	dashIndicator_.setFillColor(sf::Color::Green);
-	dashIndicator_.setPosition({ 50.f, 500.f });
-
-
+	dashIndicator_.setPosition({ Constants::Dash::IndicatorX, Constants::Dash::IndicatorY });
 }
 
 //--------------------------------------------------------------------------
@@ -154,7 +117,7 @@ void Character::dashLeft()
 	}
 
 	position_.x = std::max(
-		position_.x - Constants::Player::Dash_distance,
+		position_.x - Constants::Dash::Distance,
 		0.f
 	);
 
@@ -171,7 +134,7 @@ void Character::dashRight()
 	}
 
 	position_.x = std::min(
-		position_.x + Constants::Player::Dash_distance,
+		position_.x + Constants::Dash::Distance,
 		static_cast<float>(Constants::Window::Width - Constants::Player::Size)
 	);
 
@@ -289,10 +252,9 @@ sf::FloatRect Character::getAttackHitbox() const
 		return sf::FloatRect({ 0.f, 0.f }, { 0.f, 0.f });
 	}
 
-	float hitboxWidth = 60.f;
 	float hitboxX = position_.x + Constants::Player::Size; // We only hit to the right !!! It needs to be finalized !!!
 
-	return sf::FloatRect({ hitboxX, position_.y }, { hitboxWidth, static_cast<float>(Constants::Player::Size) });
+	return sf::FloatRect({ hitboxX, position_.y }, { Constants::Attack::HitboxWidth, static_cast<float>(Constants::Player::Size) });
 }
 
 

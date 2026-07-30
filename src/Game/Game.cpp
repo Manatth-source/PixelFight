@@ -1,12 +1,11 @@
 #include "Game/Game.h"
 
 
-Game::Game() 
+Game::Game()
 {
 	window_.create(
-		sf::VideoMode({Constants::Window::Width, Constants::Window::Height}),
+		sf::VideoMode({ Constants::Window::Width, Constants::Window::Height }),
 		"PixelFight"
-
 	);
 
 	window_.setKeyRepeatEnabled(false);
@@ -19,11 +18,9 @@ Game::Game()
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
 
-#if 1
-	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width - 700), 35.f });
+	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width) - Constants::UI::VictoryPlaqueWidthMargin, Constants::UI::VictoryPlaqueHeight });
 	victory_plaque_.setFillColor(sf::Color::Yellow);
-	victory_plaque_.setPosition({ 350,  Constants::Player::PositionY - 100 });
-#endif
+	victory_plaque_.setPosition({ Constants::UI::VictoryPlaqueX, Constants::Player::PositionY - Constants::UI::VictoryPlaqueYOffset });
 }
 
 //--------------------------------------------------------------------------

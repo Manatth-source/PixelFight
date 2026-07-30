@@ -61,7 +61,6 @@ protected:
 	float attackDuration_;
 	float attackCooldown_;
 	float attackCooldownTimer_;
-	int attackDamage_;
 
 public:
 	Character(const sf::Texture& texture);

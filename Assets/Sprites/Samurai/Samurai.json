@@ -154,7 +154,7 @@
   "frameTags": [
    { "name": "Idle", "from": 0, "to": 3, "direction": "forward", "color": "#000000ff" },
    { "name": "Walk", "from": 4, "to": 11, "direction": "forward", "color": "#000000ff" },
-   { "name": "sit", "from": 12, "to": 12, "direction": "forward", "color": "#000000ff" },
+   { "name": "Sit", "from": 12, "to": 12, "direction": "forward", "color": "#000000ff" },
    { "name": "Jump_Start", "from": 13, "to": 13, "direction": "forward", "color": "#000000ff" },
    { "name": "Jump_Loop", "from": 14, "to": 14, "direction": "forward", "color": "#000000ff" },
    { "name": "Jump_End", "from": 15, "to": 15, "direction": "forward", "color": "#000000ff" }
