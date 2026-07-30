@@ -38,6 +38,9 @@ protected:
 
 	JumpPhase jumpPhase_;
 
+	float jumpStartTimer_;
+	float jumpStartDuration_;
+
 	float jumpLandTimer_;
 	float jumpLandDuration_;
 

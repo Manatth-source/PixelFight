@@ -29,7 +29,9 @@ namespace Constants
     namespace Jump {
         constexpr float Gravity = 1500.f;
         constexpr float Strength = -600.f;
-        constexpr float LandDuration = 0.1f;
+
+        constexpr float StartDuration = 0.2f;
+        constexpr float LandDuration = 0.05f;
     }
 
     namespace Dash {

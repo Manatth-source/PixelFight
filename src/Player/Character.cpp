@@ -26,6 +26,8 @@ Character::Character(const sf::Texture& texture)
 	, isCrouching_(false)
 	, isMoving_(false)
 	, jumpPhase_(JumpPhase::None)
+	, jumpStartTimer_(0.f)
+	, jumpStartDuration_(Constants::Jump::StartDuration)
 	, jumpLandTimer_(0.f)
 	, jumpLandDuration_(Constants::Jump::LandDuration)
 {
@@ -44,9 +46,10 @@ Character::~Character()
 }
 
 //--------------------------------------------------------------------------
-// private
+//--------------- Update ---------------
 
-void Character::updateAnimationState() 
+// private
+void Character::updateAnimationState()
 {
 	if (!isAlive_) {
 		speed_ = 0;
@@ -56,14 +59,62 @@ void Character::updateAnimationState()
 		speed_ = Constants::Player::SpeedSit;
 		animation_.play("Sit");
 	}
-	else if (!isOnGround_) {
+	else if (jumpPhase_ == JumpPhase::Start) {
+		animation_.play("Jump_Start");
+	}
+	else if (jumpPhase_ == JumpPhase::Loop) {
 		animation_.play("Jump_Loop");
+	}
+	else if (jumpPhase_ == JumpPhase::Land) {
+		animation_.play("Jump_Land");
 	}
 	else if (isMoving_) {
 		animation_.play("Walk");
 	}
 	else {
 		animation_.play("Idle");
+	}
+}
+
+
+void Character::updateCooldowns(float deltaTime)
+{
+	//Dach
+	if (dashCooldownTimer_ > 0.f) {
+		dashCooldownTimer_ -= deltaTime;
+
+		dashIndicator_.setFillColor(sf::Color::Red);
+	}
+	else {
+		dashIndicator_.setFillColor(sf::Color::Green);
+	}
+
+	//Attack
+	if (attackCooldownTimer_ > 0.f) {
+		attackCooldownTimer_ -= deltaTime;
+	}
+
+	if (isAttacking_) {
+		attackTimer_ -= deltaTime;
+		if (attackTimer_ <= 0.f) {
+			isAttacking_ = false;
+		}
+	}
+
+	//Jump
+	if (jumpPhase_ == JumpPhase::Start) {
+		jumpStartTimer_ -= deltaTime;
+		if (jumpStartTimer_ <= 0.f) {
+			jumpPhase_ = JumpPhase::Loop;
+		}
+	}
+
+
+	if (jumpPhase_ == JumpPhase::Land) {
+		jumpLandTimer_ -= deltaTime;
+		if (jumpLandTimer_ <= 0.f) {
+			jumpPhase_ = JumpPhase::None;
+		}
 	}
 }
 
@@ -143,32 +194,6 @@ void Character::dashRight()
 
 }
 
-
-void Character::updateCooldowns(float deltaTime) 
-{
-	//Dach
-	if (dashCooldownTimer_ > 0.f) {
-		dashCooldownTimer_ -= deltaTime;
-
-		dashIndicator_.setFillColor(sf::Color::Red);
-	}
-	else {
-		dashIndicator_.setFillColor(sf::Color::Green);
-	}
-
-	//Attack
-	if (attackCooldownTimer_ > 0.f) {
-		attackCooldownTimer_ -= deltaTime;
-	}
-
-	if (isAttacking_) {
-		attackTimer_ -= deltaTime;
-		if (attackTimer_ <= 0.f) {
-			isAttacking_ = false;
-		}
-	}
-}
-
 //--------------------------------------------------------------------------
 // --------------- Jump ---------------
 void Character::jump()
@@ -179,7 +204,9 @@ void Character::jump()
 
 	verticalVelocity_ = jumpStrength_;
 	isOnGround_ = false;
+
 	jumpPhase_ = JumpPhase::Start;
+	jumpStartTimer_ = jumpStartDuration_;
 }
 
 
@@ -188,10 +215,12 @@ void Character::updatePhysics(float deltaTime)
 	if (!isOnGround_) {
 		verticalVelocity_ += gravity_ * deltaTime;
 		position_.y += verticalVelocity_ * deltaTime;
-
-		if (jumpPhase_ == JumpPhase::Start && verticalVelocity_ >= 0.f) {
+#if 0
+		if (jumpPhase_ == JumpPhase::Start) { //&& verticalVelocity_ >= 0.f
 			jumpPhase_ = JumpPhase::Loop;
 		}
+#endif
+
 
 		if (position_.y >= groundY_) {
 			position_.y = groundY_;
@@ -231,7 +260,7 @@ void Character::ultimate()
 {
 }
 
-//Attack
+// --------------- Attack ---------------
 
 void Character::attack() 
 {

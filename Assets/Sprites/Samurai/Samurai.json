@@ -123,7 +123,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
     "sourceSize": { "w": 128, "h": 128 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "Sprite-0001-Recovered (1) 14.aseprite",
@@ -141,7 +141,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
     "sourceSize": { "w": 128, "h": 128 },
-    "duration": 150
+    "duration": 100
    }
  ],
  "meta": {
@@ -157,7 +157,7 @@
    { "name": "Sit", "from": 12, "to": 12, "direction": "forward", "color": "#000000ff" },
    { "name": "Jump_Start", "from": 13, "to": 13, "direction": "forward", "color": "#000000ff" },
    { "name": "Jump_Loop", "from": 14, "to": 14, "direction": "forward", "color": "#000000ff" },
-   { "name": "Jump_End", "from": 15, "to": 15, "direction": "forward", "color": "#000000ff" }
+   { "name": "Jump_Land", "from": 15, "to": 15, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Sword", "opacity": 255, "blendMode": "normal" },
