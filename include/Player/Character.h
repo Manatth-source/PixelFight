@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include "Player/CharacterStats.h"
 #include "Core/Constants.h"
 #include "Graphics/Animation.h"
 
@@ -9,6 +10,7 @@
 class Character
 {
 private:
+	// Update
 	void updateAnimationState();
 
 protected:
@@ -18,12 +20,14 @@ protected:
 
 	sf::Vector2f position_;
 
-	int health_;
+	float health_;
 	bool isAlive_;
 
+	float baseSpeed_;
 	float speed_;
 
 	//Dach
+	float dashDistance_;
 	float dashCooldown_;
 	float dashCooldownTimer_;
 	sf::RectangleShape dashIndicator_;
@@ -52,6 +56,7 @@ protected:
 
 	//Sit
 	bool isCrouching_;
+	float speedSit_;
 
 	//Move
 	bool isMoving_;
@@ -64,10 +69,12 @@ protected:
 	float attackDuration_;
 	float attackCooldown_;
 	float attackCooldownTimer_;
+	float attackDamage_;
 
 public:
-	Character(const sf::Texture& texture);
-	virtual ~Character();
+
+	Character(const sf::Texture& texture, const CharacterStats& stats);
+	~Character();
 
 	void update(float deltaTime);
 
@@ -75,23 +82,28 @@ public:
 
 	void setPosition(float x, float y);
 
-	//Move
+	// Move
 	void moveLeft(float deltaTime);
 	void moveRight(float deltaTime);
 
+	// Dash
 	void dashLeft();
 	void dashRight();
+
+	// Udate
 	void updateCooldowns(float deltaTime);
 
-	//Jump
+	// Jump
 	void jump();
 	void updatePhysics(float deltaTime);
 
-	//Sit
+	// Sit
 	void setCrouching(bool crouching);
 
-	//Attack
+	// Attack
 	//---
+	float getAttackDamage() const;
+
 	virtual void passive_skill();
 	virtual void first_skill();
 	virtual void second_skill();
@@ -104,7 +116,7 @@ public:
 	bool hasHitThisAttack() const;
 	void markHit();
 
-	void takeDamage(int value);
+	void takeDamage(float value);
 	bool isAlive() const;
 	//---
 

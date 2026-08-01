@@ -5,6 +5,7 @@
 
 using json = nlohmann::json;
 
+
 void AnimationLoader::loadFromJson(Animation& animation, const std::string& JsonPath)
 {
 	std::ifstream fin(JsonPath);

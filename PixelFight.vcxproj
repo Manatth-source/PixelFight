@@ -24,6 +24,7 @@
     <ClCompile Include="src\Graphics\AnimationLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Player\Character.cpp" />
+    <ClCompile Include="src\Player\CharacterConfigLoader.cpp" />
     <ClCompile Include="src\Player\Goblin.cpp" />
     <ClCompile Include="src\Player\Samurai.cpp" />
     <ClCompile Include="src\Utils\ResourceManager.cpp" />
@@ -34,6 +35,8 @@
     <ClInclude Include="include\Graphics\Animation.h" />
     <ClInclude Include="include\Graphics\AnimationLoader.h" />
     <ClInclude Include="include\Player\Character.h" />
+    <ClInclude Include="include\Player\CharacterConfigLoader.h" />
+    <ClInclude Include="include\Player\CharacterStats.h" />
     <ClInclude Include="include\Player\Goblin.h" />
     <ClInclude Include="include\Player\Samurai.h" />
     <ClInclude Include="include\Utils\ResourceManager.h" />

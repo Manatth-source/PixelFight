@@ -1,35 +1,41 @@
 #include "Player/Character.h"
 #include <iostream>
+#include <algorithm>
+
 
 //--------------------------------------------------------------------------
 
-Character::Character(const sf::Texture& texture)
+Character::Character(const sf::Texture& texture, const CharacterStats& stats)
 	: sprite_(texture)
 	, animation_(*sprite_)
 	, position_({ Constants::Player::PositionX, Constants::Player::PositionY })
-	, health_(Constants::Player::StartHealth)
+	, health_(stats.startHealth)
 	, isAlive_(true)
-	, speed_(Constants::Player::Speed)
-	, dashCooldown_(Constants::Dash::Cooldown)
+	, baseSpeed_(stats.speed)
+	, speed_(stats.speed)
+	, speedSit_(stats.speedSit)
+	, dashDistance_(stats.dashDistance)
+	, dashCooldown_(stats.dashCooldown)
 	, dashCooldownTimer_(0.0f)
 	, verticalVelocity_(0.f)
 	, isOnGround_(true)
 	, groundY_(Constants::Player::PositionY)
-	, gravity_(Constants::Jump::Gravity)
-	, jumpStrength_(Constants::Jump::Strength)
+	, gravity_(stats.gravity)
+	, jumpStrength_(stats.jumpStrength)
 	, isAttacking_(false)
 	, attackTimer_(0.f)
-	, attackDuration_(Constants::Attack::Duration)
-	, attackCooldown_(Constants::Attack::Cooldown)
+	, attackDuration_(stats.attackDuration)
+	, attackCooldown_(stats.attackCooldown)
 	, attackCooldownTimer_(0.f)
+	, attackDamage_(stats.attackDamage)
 	, hasHitThisAttack_(false)
 	, isCrouching_(false)
 	, isMoving_(false)
 	, jumpPhase_(JumpPhase::None)
 	, jumpStartTimer_(0.f)
-	, jumpStartDuration_(Constants::Jump::StartDuration)
+	, jumpStartDuration_(stats.jumpStartDuration)
 	, jumpLandTimer_(0.f)
-	, jumpLandDuration_(Constants::Jump::LandDuration)
+	, jumpLandDuration_(stats.jumpLandDuration)
 {
 	sprite_->setScale({ Constants::Player::SpriteScale, Constants::Player::SpriteScale });
 	sprite_->setPosition(position_);
@@ -54,12 +60,17 @@ void Character::updateAnimationState()
 	if (!isAlive_) {
 		speed_ = 0;
 		animation_.play("Dead");
+		return;
 	}
 	else if (isCrouching_) {
-		speed_ = Constants::Player::SpeedSit;
+		speed_ = speedSit_;
 		animation_.play("Sit");
+		return;
 	}
-	else if (jumpPhase_ == JumpPhase::Start) {
+
+	speed_ = baseSpeed_;
+
+	if (jumpPhase_ == JumpPhase::Start) {
 		animation_.play("Jump_Start");
 	}
 	else if (jumpPhase_ == JumpPhase::Loop) {
@@ -123,7 +134,6 @@ void Character::updateCooldowns(float deltaTime)
 
 void Character::update(float deltaTime) 
 {
-	speed_ = Constants::Player::Speed;
 	updateAnimationState();
 	animation_.update(deltaTime);
 }
@@ -167,14 +177,9 @@ void Character::dashLeft()
 		return;
 	}
 
-	position_.x = std::max(
-		position_.x - Constants::Dash::Distance,
-		0.f
-	);
-
+	position_.x = std::max(position_.x - dashDistance_, 0.f);
 	sprite_->setPosition(position_);
 	dashCooldownTimer_ = dashCooldown_;
-
 }
 
 
@@ -184,14 +189,9 @@ void Character::dashRight()
 		return;
 	}
 
-	position_.x = std::min(
-		position_.x + Constants::Dash::Distance,
-		static_cast<float>(Constants::Window::Width - Constants::Player::Size)
-	);
-
+	position_.x = std::min(position_.x + dashDistance_, static_cast<float>(Constants::Window::Width - Constants::Player::Size));
 	sprite_->setPosition(position_);
 	dashCooldownTimer_ = dashCooldown_;
-
 }
 
 //--------------------------------------------------------------------------
@@ -262,6 +262,12 @@ void Character::ultimate()
 
 // --------------- Attack ---------------
 
+float Character::getAttackDamage() const
+{
+	return attackDamage_;
+}
+
+
 void Character::attack() 
 {
 	if (attackCooldownTimer_ > 0.f) {
@@ -305,18 +311,18 @@ void Character::markHit()
 }
 
 
-void Character::takeDamage(int value)
+void Character::takeDamage(float value)
 {
-	this->health_ = std::max(health_ - value, 0);
+	this->health_ = std::max(health_ - value, 0.f);
 	if (health_ == 0) isAlive_ = false;
 }
 
-#if 1
+
 bool Character::isAlive() const
 {
 	return isAlive_;
 }
-#endif
+
 //--------------------------------------------------------------------------
 
 void Character::setMoving(bool moving)

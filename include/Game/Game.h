@@ -18,9 +18,8 @@ private:
 
 	std::unique_ptr<Character> player_;
 	std::unique_ptr<Character> player2_;
-#if 1
+
 	sf::RectangleShape victory_plaque_;
-#endif
 
 public:
 	Game();

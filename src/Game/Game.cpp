@@ -11,15 +11,15 @@ Game::Game()
 	window_.setKeyRepeatEnabled(false);
 
 	ground_.setSize({ static_cast<float>(Constants::Window::Width), Constants::Window::Height - Constants::Player::PositionY });
-	ground_.setFillColor(sf::Color(55, 45, 38));
+	ground_.setFillColor(Constants::Color::Ground);
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
-	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+	player_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
 
 	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width) - Constants::UI::VictoryPlaqueWidthMargin, Constants::UI::VictoryPlaqueHeight });
-	victory_plaque_.setFillColor(sf::Color::Yellow);
+	victory_plaque_.setFillColor(Constants::Color::Plaque);
 	victory_plaque_.setPosition({ Constants::UI::VictoryPlaqueX, Constants::Player::PositionY - Constants::UI::VictoryPlaqueYOffset });
 }
 
@@ -106,13 +106,13 @@ void Game::update(float deltaTime)
 //*********************************************
 
 	//Attack
-	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value() ) {
-		player2_->takeDamage(50);
+	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
+		player2_->takeDamage(player_->getAttackDamage());
 		player_->markHit();
 	}
 
-	if (!player2_->hasHitThisAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value() ) {
-		player_->takeDamage(50);
+	if (!player2_->hasHitThisAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value()) {
+		player_->takeDamage(player2_->getAttackDamage());
 		player2_->markHit();
 	}
 }
@@ -121,18 +121,17 @@ void Game::update(float deltaTime)
 
 void Game::render() 
 {
-	window_.clear(sf::Color::Cyan);
+	window_.clear(Constants::Color::Sky);
 
 	window_.draw(ground_);
 
 
 	if (player_->isAlive()) player_->render(window_);
 	if (player2_->isAlive()) player2_->render(window_);
-#if 1
+
+
 	if (!player_->isAlive() || !player2_->isAlive()) 
 		window_.draw(victory_plaque_);
-#endif
-
 
 	window_.display();
 }
