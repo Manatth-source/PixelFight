@@ -1,4 +1,5 @@
 #include "Player/CharacterConfigLoader.h"
+#include "Utils/Logger.h"
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <fstream>
@@ -13,7 +14,7 @@ CharacterStats CharacterConfigLoader::loadFromJson(const std::string& JsonPath)
 	std::ifstream fin(JsonPath);
 
 	if (!fin.is_open()) {
-		std::cout << "Couldn't open character config: " << JsonPath << std::endl;
+		Logger::error("Couldn't open character config: " + JsonPath);
 		return stats;
 	}
 

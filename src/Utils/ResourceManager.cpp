@@ -1,4 +1,5 @@
 #include "Utils/ResourceManager.h"
+#include "Utils/Logger.h"
 #include <iostream>
 
 sf::Texture& ResourceManager::getTexture(const std::string& filepath) {
@@ -7,7 +8,7 @@ sf::Texture& ResourceManager::getTexture(const std::string& filepath) {
 		return it->second;
 	
 	sf::Texture texture;
-	if(!texture.loadFromFile(filepath)) std::cout << "Couldn't load texture: " << filepath << std::endl;;
+	if(!texture.loadFromFile(filepath)) Logger::error("Couldn't load texture: " + filepath);
 	textures_[filepath] = std::move(texture);
 
 	return textures_[filepath];

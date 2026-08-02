@@ -1,13 +1,13 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <memory>
 #include "Utils/ResourceManager.h"
 #include "Input/KeyboardInputSource.h"
 #include "Player/Samurai.h"
 #include "Player/Goblin.h"
 #include "Player/Wizard.h"
 #include "Core/Constants.h"
+#include <memory>
 
 
 class Game

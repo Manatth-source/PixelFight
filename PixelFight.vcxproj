@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -29,6 +29,7 @@
     <ClCompile Include="src\Player\Goblin.cpp" />
     <ClCompile Include="src\Player\Samurai.cpp" />
     <ClCompile Include="src\Player\Wizard.cpp" />
+    <ClCompile Include="src\Utils\Logger.cpp" />
     <ClCompile Include="src\Utils\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +46,7 @@
     <ClInclude Include="include\Player\Goblin.h" />
     <ClInclude Include="include\Player\Samurai.h" />
     <ClInclude Include="include\Player\Wizard.h" />
+    <ClInclude Include="include\Utils\Logger.h" />
     <ClInclude Include="include\Utils\ResourceManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

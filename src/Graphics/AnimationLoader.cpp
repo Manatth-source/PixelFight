@@ -1,4 +1,5 @@
 #include "Graphics/AnimationLoader.h"
+#include "Utils/Logger.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
@@ -11,7 +12,7 @@ void AnimationLoader::loadFromJson(Animation& animation, const std::string& Json
 	std::ifstream fin(JsonPath);
 
 	if (!fin.is_open()) {
-		std::cout << "Couldn't open animation json: " << JsonPath << std::endl;
+		Logger::error("Couldn't open animation json: " + JsonPath);
 		return;
 	}
 
