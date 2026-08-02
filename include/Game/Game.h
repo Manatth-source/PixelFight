@@ -5,6 +5,7 @@
 #include "Utils/ResourceManager.h"
 #include "Player/Samurai.h"
 #include "Player/Goblin.h"
+#include "Player/Wizard.h"
 #include "Core/Constants.h"
 
 

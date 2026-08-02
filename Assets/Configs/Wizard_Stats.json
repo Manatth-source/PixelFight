@@ -1,0 +1,17 @@
+{
+    "startHealth": 100.0,
+    "speed": 150.0,
+    "speedSit": 40.0,
+
+    "dashDistance": 200.0,
+    "dashCooldown": 3.0,
+
+    "gravity": 1000.0,
+    "jumpStrength": -450.0,
+    "jumpStartDuration": 0.2,
+    "jumpLandDuration": 0.1,
+
+    "attackDuration": 0.2,
+    "attackCooldown": 1.5,
+    "attackDamage": 35.0
+}

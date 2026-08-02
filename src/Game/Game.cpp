@@ -1,5 +1,8 @@
 #include "Game/Game.h"
 
+#define ON 1
+#define OFF 0
+
 
 Game::Game()
 {
@@ -14,7 +17,18 @@ Game::Game()
 	ground_.setFillColor(Constants::Color::Ground);
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
+#if OFF
 	player_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
+#endif
+
+#if ON
+	player_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"));
+#endif
+
+#if OFF
+	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+#endif
+
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
 

@@ -62,7 +62,7 @@ void Character::updateAnimationState()
 		animation_.play("Dead");
 		return;
 	}
-	else if (isCrouching_) {
+	else if (isCrouching_ && jumpPhase_ == JumpPhase::None) {
 		speed_ = speedSit_;
 		animation_.play("Sit");
 		return;
@@ -215,11 +215,6 @@ void Character::updatePhysics(float deltaTime)
 	if (!isOnGround_) {
 		verticalVelocity_ += gravity_ * deltaTime;
 		position_.y += verticalVelocity_ * deltaTime;
-#if 0
-		if (jumpPhase_ == JumpPhase::Start) { //&& verticalVelocity_ >= 0.f
-			jumpPhase_ = JumpPhase::Loop;
-		}
-#endif
 
 
 		if (position_.y >= groundY_) {

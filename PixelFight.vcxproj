@@ -27,6 +27,7 @@
     <ClCompile Include="src\Player\CharacterConfigLoader.cpp" />
     <ClCompile Include="src\Player\Goblin.cpp" />
     <ClCompile Include="src\Player\Samurai.cpp" />
+    <ClCompile Include="src\Player\Wizard.cpp" />
     <ClCompile Include="src\Utils\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +40,7 @@
     <ClInclude Include="include\Player\CharacterStats.h" />
     <ClInclude Include="include\Player\Goblin.h" />
     <ClInclude Include="include\Player\Samurai.h" />
+    <ClInclude Include="include\Player\Wizard.h" />
     <ClInclude Include="include\Utils\ResourceManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -42,6 +42,9 @@
     <ClCompile Include="src\Player\CharacterConfigLoader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Player\Wizard.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game\Game.h">
@@ -72,6 +75,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="include\Player\CharacterConfigLoader.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Player\Wizard.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
