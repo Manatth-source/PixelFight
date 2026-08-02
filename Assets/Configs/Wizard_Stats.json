@@ -3,8 +3,8 @@
     "speed": 150.0,
     "speedSit": 40.0,
 
-    "dashDistance": 200.0,
-    "dashCooldown": 3.0,
+    "dashDistance": 400.0,
+    "dashCooldown": 3.5,
 
     "gravity": 1000.0,
     "jumpStrength": -450.0,
@@ -12,6 +12,6 @@
     "jumpLandDuration": 0.1,
 
     "attackDuration": 0.2,
-    "attackCooldown": 1.5,
+    "attackCooldown": 1.8,
     "attackDamage": 35.0
 }

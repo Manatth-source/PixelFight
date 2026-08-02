@@ -17,8 +17,8 @@ Game::Game()
 	ground_.setFillColor(Constants::Color::Ground);
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
-#if OFF
-	player_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
+#if ON
+	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
 #endif
 
 #if ON
@@ -29,7 +29,9 @@ Game::Game()
 	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 #endif
 
+#if OFF
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+#endif
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
 
 	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width) - Constants::UI::VictoryPlaqueWidthMargin, Constants::UI::VictoryPlaqueHeight });
@@ -39,7 +41,7 @@ Game::Game()
 
 //--------------------------------------------------------------------------
 
-void Game::run() 
+void Game::run()
 {
 	while (window_.isOpen()) {
 		float deltaTime = clock_.restart().asSeconds();
@@ -52,36 +54,15 @@ void Game::run()
 
 //--------------------------------------------------------------------------
 
-void Game::processEvents() 
+void Game::processEvents()
 {
 	while (const auto event = window_.pollEvent()) {
 		if (event->is<sf::Event::Closed>()) {
 			window_.close();
 		}
 
-		if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
-		{
-			// Dash
-			if (keyPressed->code == sf::Keyboard::Key::LShift)
-			{
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-				{
-					player_->dashLeft();
-				}
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-				{
-					player_->dashRight();
-				}
-			}
-			// Jump
-			if (keyPressed->code == sf::Keyboard::Key::W || keyPressed->code == sf::Keyboard::Key::Space) {
-				player_->jump();
-			}
-			//Attack
-			if (keyPressed->code == sf::Keyboard::Key::F) {
-				player_->attack();
-
-			}
+		if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+			inputSource_.onKeyPressed(keyPressed->code);
 		}
 	}
 }
@@ -93,33 +74,44 @@ void Game::update(float deltaTime)
 	player_->updateCooldowns(deltaTime);
 	player_->updatePhysics(deltaTime);
 
-	bool moved = false;
+	if (inputSource_.isActionPressed(InputAction::Jump)) {
+		player_->jump();
+	}
+	if (inputSource_.isActionPressed(InputAction::Attack)) {
+		player_->attack();
+	}
+	if (inputSource_.isActionPressed(InputAction::DashLeft)) {
+		player_->dashLeft();
+	}
+	if (inputSource_.isActionPressed(InputAction::DashRight)) {
+		player_->dashRight();
+	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-	{
+	bool moved = false;
+	if (inputSource_.isActionHeld(InputAction::MoveLeft)) {
 		player_->moveLeft(deltaTime);
 		moved = true;
 	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-	{
+	if (inputSource_.isActionHeld(InputAction::MoveRight)) {
 		player_->moveRight(deltaTime);
 		moved = true;
 	}
 
 	player_->setMoving(moved);
-	player_->setCrouching(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl));
+	player_->setCrouching(inputSource_.isActionHeld(InputAction::Crouch));
 
 	player_->update(deltaTime);
 
+	inputSource_.resetFrame();
 
-//*********************************************
+
+	//*********************************************
 	player2_->updateCooldowns(deltaTime);
 	player2_->updatePhysics(deltaTime);
 	player2_->update(deltaTime);
-//*********************************************
+	//*********************************************
 
-	//Attack
+		//Attack
 	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
 		player2_->takeDamage(player_->getAttackDamage());
 		player_->markHit();
@@ -133,7 +125,7 @@ void Game::update(float deltaTime)
 
 //--------------------------------------------------------------------------
 
-void Game::render() 
+void Game::render()
 {
 	window_.clear(Constants::Color::Sky);
 
@@ -144,7 +136,7 @@ void Game::render()
 	if (player2_->isAlive()) player2_->render(window_);
 
 
-	if (!player_->isAlive() || !player2_->isAlive()) 
+	if (!player_->isAlive() || !player2_->isAlive())
 		window_.draw(victory_plaque_);
 
 	window_.display();

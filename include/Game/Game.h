@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "Utils/ResourceManager.h"
+#include "Input/KeyboardInputSource.h"
 #include "Player/Samurai.h"
 #include "Player/Goblin.h"
 #include "Player/Wizard.h"
@@ -16,6 +17,8 @@ private:
 	sf::RectangleShape ground_;
 	sf::Clock clock_;
 	ResourceManager resourceManager_;
+
+	KeyboardInputSource inputSource_;
 
 	std::unique_ptr<Character> player_;
 	std::unique_ptr<Character> player2_;
