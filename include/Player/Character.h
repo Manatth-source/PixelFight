@@ -66,7 +66,7 @@ protected:
 	//Attack
 	sf::RectangleShape attackHitbox_;
 	bool isAttacking_;
-	bool hasHitThisAttack_;
+	bool hasPerformedAttack_;
 	float attackTimer_;
 	float attackDuration_;
 	float attackCooldown_;
@@ -118,7 +118,7 @@ public:
 	sf::FloatRect getAttackHitbox() const;
 	sf::FloatRect getBodyBounds() const;
 
-	bool hasHitThisAttack() const;
+	bool hasPerformedAttack() const;
 	void markHit();
 
 	void takeDamage(float value);

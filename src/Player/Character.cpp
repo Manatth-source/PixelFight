@@ -29,7 +29,7 @@ Character::Character(const sf::Texture& texture, const CharacterStats& stats)
 	, attackCooldown_(stats.attackCooldown)
 	, attackCooldownTimer_(0.f)
 	, attackDamage_(stats.attackDamage)
-	, hasHitThisAttack_(false)
+	, hasPerformedAttack_(false)
 	, isCrouching_(false)
 	, isMoving_(false)
 	, jumpPhase_(JumpPhase::None)
@@ -285,7 +285,7 @@ void Character::attack()
 	isAttacking_ = true;
 	attackTimer_ = attackDuration_;
 	attackCooldownTimer_ = attackCooldown_;
-	hasHitThisAttack_ = false;
+	hasPerformedAttack_ = false;
 
 	Logger::log("Attack started");
 }
@@ -316,15 +316,15 @@ sf::FloatRect Character::getBodyBounds() const
 }
 
 
-bool Character::hasHitThisAttack() const
+bool Character::hasPerformedAttack() const
 {
-	return hasHitThisAttack_;
+	return hasPerformedAttack_;
 }
 
 
 void Character::markHit()
 {
-	hasHitThisAttack_ = true;
+	hasPerformedAttack_ = true;
 }
 
 

@@ -112,16 +112,16 @@ void Game::update(float deltaTime)
 	//*********************************************
 
 		//Attack
-	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
+	if (!player_->hasPerformedAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
 		player2_->takeDamage(player_->getAttackDamage());
+		player_->markHit();
 	}
 
-	if (!player2_->hasHitThisAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value()) {
+	if (!player2_->hasPerformedAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value()) {
 		player_->takeDamage(player2_->getAttackDamage());
+		player2_->markHit();
 	}
-	
-	player_->markHit();
-	player2_->markHit();
+
 }
 
 //--------------------------------------------------------------------------
