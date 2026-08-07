@@ -32,7 +32,7 @@ Game::Game()
 #if OFF
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 #endif
-	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
+	player2_->setPosition(Constants::Window::Width - Constants::Player::Size - 200, Constants::Player::PositionY);
 
 	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width) - Constants::UI::VictoryPlaqueWidthMargin, Constants::UI::VictoryPlaqueHeight });
 	victory_plaque_.setFillColor(Constants::Color::Plaque);
@@ -114,13 +114,14 @@ void Game::update(float deltaTime)
 		//Attack
 	if (!player_->hasHitThisAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
 		player2_->takeDamage(player_->getAttackDamage());
-		player_->markHit();
 	}
 
 	if (!player2_->hasHitThisAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value()) {
 		player_->takeDamage(player2_->getAttackDamage());
-		player2_->markHit();
 	}
+	
+	player_->markHit();
+	player2_->markHit();
 }
 
 //--------------------------------------------------------------------------

@@ -4,8 +4,8 @@
 
  int main(void) 
  {
-	std::ofstream logFile("game.log");
-	Logger::setStream(logFile);
+	//std::ofstream logFile("game.log");
+	//Logger::setStream(logFile);
 
 	Game game;
 	game.run();

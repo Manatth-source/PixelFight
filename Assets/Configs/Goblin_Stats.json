@@ -12,6 +12,6 @@
     "jumpLandDuration": 0.1,
 
     "attackDuration": 0.2,
-    "attackCooldown": 0.8,
+    "attackCooldown": 1.0,
     "attackDamage": 20.0
 }

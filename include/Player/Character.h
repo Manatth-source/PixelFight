@@ -23,6 +23,8 @@ protected:
 	float health_;
 	bool isAlive_;
 
+	bool isLookingRight_;
+
 	float baseSpeed_;
 	float speed_;
 
@@ -81,6 +83,9 @@ public:
 	virtual void render(sf::RenderWindow& window);
 
 	void setPosition(float x, float y);
+	void updateSpritePosition();
+
+	void setLookingRight(bool lookingRight);
 
 	// Move
 	void moveLeft(float deltaTime);
