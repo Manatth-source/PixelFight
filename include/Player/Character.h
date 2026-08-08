@@ -13,6 +13,12 @@ private:
 	// Update
 	void updateAnimationState();
 
+	//Dash
+	virtual void performDash();
+
+	//Move
+	void setLookingRight(bool lookingRight);
+
 protected:
 	std::optional<sf::Sprite> sprite_;
 
@@ -37,6 +43,10 @@ protected:
 		End
 	};
 
+	DashPhase dashPhase_;
+
+	bool dashToRight_;
+	float dashTimer_;
 	float dashDistance_;
 	float dashCooldown_;
 	float dashCooldownTimer_;
@@ -92,8 +102,6 @@ public:
 
 	void setPosition(float x, float y);
 	void updateSpritePosition();
-
-	void setLookingRight(bool lookingRight);
 
 	// Move
 	void moveLeft(float deltaTime);

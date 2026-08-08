@@ -3,7 +3,7 @@
     "speed": 170.0,
     "speedSit": 50.0,
 
-    "dashDistance": 150.0,
+    "dashDistance": 200.0,
     "dashCooldown": 1.3,
 
     "gravity": 1500.0,

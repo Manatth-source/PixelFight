@@ -15,6 +15,8 @@ Character::Character(const sf::Texture& texture, const CharacterStats& stats)
 	, baseSpeed_(stats.speed)
 	, speed_(stats.speed)
 	, speedSit_(stats.speedSit)
+	, dashToRight_(true)
+	, dashTimer_(0.f)
 	, dashDistance_(stats.dashDistance)
 	, dashCooldown_(stats.dashCooldown)
 	, dashCooldownTimer_(0.0f)
@@ -65,6 +67,10 @@ void Character::updateAnimationState()
 		animation_.play("Dead");
 		return;
 	}
+	else if (dashPhase_ == DashPhase::Start || dashPhase_ == DashPhase::End) {
+		animation_.play("Dash");
+		return;
+	}
 	else if (isCrouching_ && jumpPhase_ == JumpPhase::None) {
 		speed_ = speedSit_;
 		animation_.play("Sit");
@@ -93,7 +99,7 @@ void Character::updateAnimationState()
 
 void Character::updateCooldowns(float deltaTime)
 {
-	//Dach
+	//Dash
 	if (dashCooldownTimer_ > 0.f) {
 		dashCooldownTimer_ -= deltaTime;
 
@@ -101,6 +107,22 @@ void Character::updateCooldowns(float deltaTime)
 	}
 	else {
 		dashIndicator_.setFillColor(sf::Color::Green);
+	}
+
+
+	if (!(dashPhase_ == DashPhase::None)) dashTimer_ += deltaTime;
+
+
+	if (dashPhase_ == DashPhase::Start && dashTimer_ >= Constants::Dash::DurationPhaseStartAndEnd) {
+		dashTimer_ = 0.f;
+		dashPhase_ = DashPhase::Move;
+	}
+	else if (dashPhase_ == DashPhase::Move) {
+		performDash();
+	}
+	else if (dashPhase_ == DashPhase::End && dashTimer_ >= Constants::Dash::DurationPhaseStartAndEnd) {
+		dashTimer_ = 0.f;
+		dashPhase_ = DashPhase::None;
 	}
 
 	//Attack
@@ -167,6 +189,11 @@ void Character::setPosition(float x, float y)
 
 void Character::moveLeft(float deltaTime) 
 {
+
+	if (dashPhase_ != DashPhase::None) {
+		return;
+	}
+
 	position_.x = (position_.x - speed_ * deltaTime > 0 ? position_.x - speed_ * deltaTime : 0);
 	setLookingRight(false);
 	updateSpritePosition();
@@ -175,6 +202,11 @@ void Character::moveLeft(float deltaTime)
 
 void Character::moveRight(float deltaTime) 
 {
+
+	if (dashPhase_ != DashPhase::None) {
+		return;
+	}
+
 	position_.x = (position_.x + speed_ * deltaTime < Constants::Window::Width - Constants::Player::Size ? position_.x + speed_ * deltaTime : Constants::Window::Width - Constants::Player::Size);
 	setLookingRight(true);
 	updateSpritePosition();
@@ -185,25 +217,39 @@ void Character::moveRight(float deltaTime)
 
 void Character::dashLeft()
 {
-	if (dashCooldownTimer_ > 0.f) {
+	if (dashCooldownTimer_ > 0.f || dashPhase_ != DashPhase::None) {
 		return;
 	}
 
-	position_.x = std::max(position_.x - dashDistance_, 0.f);
-	updateSpritePosition();
+	dashPhase_ = DashPhase::Start;
+	dashTimer_ = 0.f;
+	dashToRight_ = false;
+
 	dashCooldownTimer_ = dashCooldown_;
 }
 
 
 void Character::dashRight()
 {
-	if (dashCooldownTimer_ > 0.f) {
+	if (dashCooldownTimer_ > 0.f || dashPhase_ != DashPhase::None) {
 		return;
 	}
 
-	position_.x = std::min(position_.x + dashDistance_, static_cast<float>(Constants::Window::Width - Constants::Player::Size));
-	updateSpritePosition();
+	dashPhase_ = DashPhase::Start;
+	dashTimer_ = 0.f;
+	dashToRight_ = true;
+
 	dashCooldownTimer_ = dashCooldown_;
+}
+
+
+void Character::performDash()
+{
+	if (!dashToRight_) position_.x = std::max(position_.x - dashDistance_, 0.f);
+	else position_.x = std::min(position_.x + dashDistance_, static_cast<float>(Constants::Window::Width - Constants::Player::Size));
+
+	dashPhase_ = DashPhase::End;
+	updateSpritePosition();
 }
 
 //--------------------------------------------------------------------------
@@ -219,6 +265,10 @@ void Character::shild()
 
 void Character::jump()
 {
+	if (dashPhase_ != DashPhase::None) {
+		return;
+	}
+
 	if (!isOnGround_) {
 		return;
 	}
@@ -233,6 +283,10 @@ void Character::jump()
 
 void Character::updatePhysics(float deltaTime) 
 {
+	if (dashPhase_ != DashPhase::None) {
+		return;
+	}
+
 	if (!isOnGround_) {
 		verticalVelocity_ += gravity_ * deltaTime;
 		position_.y += verticalVelocity_ * deltaTime;
@@ -286,6 +340,10 @@ float Character::getAttackDamage() const
 
 void Character::attack() 
 {
+	if (dashPhase_ != DashPhase::None) {
+		return;
+	}
+
 	if (attackCooldownTimer_ > 0.f) {
 		return;
 	}

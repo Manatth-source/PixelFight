@@ -18,13 +18,13 @@ Game::Game()
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
 
-#if ON
+#if OFF
 	player1_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
 #endif
 #if OFF
 	player1_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"));
 #endif
-#if OFF
+#if ON
 	player1_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 #endif
 
@@ -85,6 +85,7 @@ void Game::update(float deltaTime)
 	if (inputSource_.isActionPressed(InputAction::Attack)) {
 		player1_->attack();
 	}
+
 	if (inputSource_.isActionPressed(InputAction::DashLeft)) {
 		player1_->dashLeft();
 	}
