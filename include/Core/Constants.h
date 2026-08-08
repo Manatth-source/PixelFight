@@ -24,7 +24,8 @@ namespace Constants
 
     namespace Dash {
         constexpr float IndicatorSize = 50.f;
-        constexpr float IndicatorX = 50.f;
+        constexpr float IndicatorXPlayer1 = 50.f;
+        constexpr float IndicatorXPlayer2 = 1180.f;
         constexpr float IndicatorY = 500.f;
     }
 

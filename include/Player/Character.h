@@ -29,6 +29,14 @@ protected:
 	float speed_;
 
 	//Dach
+	enum class DashPhase
+	{
+		None,
+		Start,
+		Move,
+		End
+	};
+
 	float dashDistance_;
 	float dashCooldown_;
 	float dashCooldownTimer_;
@@ -92,8 +100,11 @@ public:
 	void moveRight(float deltaTime);
 
 	// Dash
-	void dashLeft();
-	void dashRight();
+	virtual void dashLeft();
+	virtual void dashRight();
+
+	//Shild
+	virtual void shild();
 
 	// Udate
 	void updateCooldowns(float deltaTime);
@@ -126,4 +137,6 @@ public:
 	//---
 
 	void setMoving(bool moving);
+
+	void setDashIndicatorPosition(float x, float y);
 };

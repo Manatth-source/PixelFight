@@ -45,7 +45,7 @@ Character::Character(const sf::Texture& texture, const CharacterStats& stats)
 
 	dashIndicator_.setSize({ Constants::Dash::IndicatorSize, Constants::Dash::IndicatorSize });
 	dashIndicator_.setFillColor(sf::Color::Green);
-	dashIndicator_.setPosition({ Constants::Dash::IndicatorX, Constants::Dash::IndicatorY });
+	dashIndicator_.setPosition({ Constants::Dash::IndicatorXPlayer1, Constants::Dash::IndicatorY });
 }
 
 //--------------------------------------------------------------------------
@@ -207,6 +207,14 @@ void Character::dashRight()
 }
 
 //--------------------------------------------------------------------------
+// --------------- Shild ---------------
+
+void Character::shild()
+{
+
+}
+
+//--------------------------------------------------------------------------
 // --------------- Jump ---------------
 
 void Character::jump()
@@ -358,6 +366,13 @@ void Character::setLookingRight(bool lookingRight)
 
 	float scaleX = isLookingRight_ ? Constants::Player::SpriteScale : -Constants::Player::SpriteScale;
 	sprite_->setScale({ scaleX, Constants::Player::SpriteScale });
+}
+
+//--------------------------------------------------------------------------
+
+void Character::setDashIndicatorPosition(float x, float y)
+{
+	dashIndicator_.setPosition({ x, y });
 }
 
 //--------------------------------------------------------------------------

@@ -17,22 +17,27 @@ Game::Game()
 	ground_.setFillColor(Constants::Color::Ground);
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
-#if ON
-	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
-#endif
 
 #if ON
-	player_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"));
+	player1_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
 #endif
-
 #if OFF
-	player_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+	player1_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"));
 #endif
+#if OFF
+	player1_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+#endif
+
 
 #if OFF
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
 #endif
-	player2_->setPosition(Constants::Window::Width - Constants::Player::Size - 200, Constants::Player::PositionY);
+#if ON
+	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
+#endif
+
+	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
+	player2_->setDashIndicatorPosition(Constants::Dash::IndicatorXPlayer2, Constants::Dash::IndicatorY);
 
 	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width) - Constants::UI::VictoryPlaqueWidthMargin, Constants::UI::VictoryPlaqueHeight });
 	victory_plaque_.setFillColor(Constants::Color::Plaque);
@@ -71,36 +76,36 @@ void Game::processEvents()
 
 void Game::update(float deltaTime)
 {
-	player_->updateCooldowns(deltaTime);
-	player_->updatePhysics(deltaTime);
+	player1_->updateCooldowns(deltaTime);
+	player1_->updatePhysics(deltaTime);
 
 	if (inputSource_.isActionPressed(InputAction::Jump)) {
-		player_->jump();
+		player1_->jump();
 	}
 	if (inputSource_.isActionPressed(InputAction::Attack)) {
-		player_->attack();
+		player1_->attack();
 	}
 	if (inputSource_.isActionPressed(InputAction::DashLeft)) {
-		player_->dashLeft();
+		player1_->dashLeft();
 	}
 	if (inputSource_.isActionPressed(InputAction::DashRight)) {
-		player_->dashRight();
+		player1_->dashRight();
 	}
 
 	bool moved = false;
 	if (inputSource_.isActionHeld(InputAction::MoveLeft)) {
-		player_->moveLeft(deltaTime);
+		player1_->moveLeft(deltaTime);
 		moved = true;
 	}
 	if (inputSource_.isActionHeld(InputAction::MoveRight)) {
-		player_->moveRight(deltaTime);
+		player1_->moveRight(deltaTime);
 		moved = true;
 	}
 
-	player_->setMoving(moved);
-	player_->setCrouching(inputSource_.isActionHeld(InputAction::Crouch));
+	player1_->setMoving(moved);
+	player1_->setCrouching(inputSource_.isActionHeld(InputAction::Crouch));
 
-	player_->update(deltaTime);
+	player1_->update(deltaTime);
 
 	inputSource_.resetFrame();
 
@@ -112,13 +117,13 @@ void Game::update(float deltaTime)
 	//*********************************************
 
 		//Attack
-	if (!player_->hasPerformedAttack() && player_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
-		player2_->takeDamage(player_->getAttackDamage());
-		player_->markHit();
+	if (!player1_->hasPerformedAttack() && player1_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
+		player2_->takeDamage(player1_->getAttackDamage());
+		player1_->markHit();
 	}
 
-	if (!player2_->hasPerformedAttack() && player2_->getAttackHitbox().findIntersection(player_->getBodyBounds()).has_value()) {
-		player_->takeDamage(player2_->getAttackDamage());
+	if (!player2_->hasPerformedAttack() && player2_->getAttackHitbox().findIntersection(player1_->getBodyBounds()).has_value()) {
+		player1_->takeDamage(player2_->getAttackDamage());
 		player2_->markHit();
 	}
 
@@ -133,11 +138,11 @@ void Game::render()
 	window_.draw(ground_);
 
 
-	if (player_->isAlive()) player_->render(window_);
+	if (player1_->isAlive()) player1_->render(window_);
 	if (player2_->isAlive()) player2_->render(window_);
 
 
-	if (!player_->isAlive() || !player2_->isAlive())
+	if (!player1_->isAlive() || !player2_->isAlive())
 		window_.draw(victory_plaque_);
 
 	window_.display();
