@@ -50,7 +50,9 @@ protected:
 	float dashDistance_;
 	float dashCooldown_;
 	float dashCooldownTimer_;
-	sf::RectangleShape dashIndicator_;
+
+	std::optional<sf::Sprite> dashReadyIndicator_;
+	std::optional<sf::Sprite> dashReloadIndicator_;
 
 	// Jump
 	enum class JumpPhase {
@@ -93,7 +95,7 @@ protected:
 
 public:
 
-	Character(const sf::Texture& texture, const CharacterStats& stats);
+	Character(const sf::Texture& texture, const sf::Texture& dashReadyTexture, const sf::Texture& dashReloadTexture, const CharacterStats& stats);
 	~Character();
 
 	void update(float deltaTime);

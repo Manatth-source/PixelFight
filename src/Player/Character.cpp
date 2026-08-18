@@ -6,8 +6,15 @@
 
 //--------------------------------------------------------------------------
 
-Character::Character(const sf::Texture& texture, const CharacterStats& stats)
+Character::Character(
+	const sf::Texture& texture,
+	const sf::Texture& dashReadyTexture,
+	const sf::Texture& dashReloadTexture,
+	const CharacterStats& stats
+)
 	: sprite_(texture)
+	, dashReadyIndicator_(dashReadyTexture)
+	, dashReloadIndicator_(dashReloadTexture)
 	, animation_(*sprite_)
 	, position_({ Constants::Player::PositionX, Constants::Player::PositionY })
 	, health_(stats.startHealth)
@@ -45,9 +52,32 @@ Character::Character(const sf::Texture& texture, const CharacterStats& stats)
 	sprite_->setScale({ Constants::Player::SpriteScale, Constants::Player::SpriteScale });
 	updateSpritePosition();
 
-	dashIndicator_.setSize({ Constants::Dash::IndicatorSize, Constants::Dash::IndicatorSize });
-	dashIndicator_.setFillColor(sf::Color::Green);
-	dashIndicator_.setPosition({ Constants::Dash::IndicatorXPlayer1, Constants::Dash::IndicatorY });
+	const sf::Vector2f indicatorSize(
+		Constants::Dash::IndicatorSize,
+		Constants::Dash::IndicatorSize
+	);
+
+	dashReadyIndicator_->setScale({
+		indicatorSize.x / dashReadyTexture.getSize().x,
+		indicatorSize.y / dashReadyTexture.getSize().y
+	});
+
+	dashReloadIndicator_->setScale({
+		indicatorSize.x / dashReadyTexture.getSize().x,
+		indicatorSize.y / dashReadyTexture.getSize().y
+	});
+
+	dashReadyIndicator_->setPosition({
+		Constants::Dash::IndicatorXPlayer1,
+		Constants::Dash::IndicatorY
+	});
+
+	dashReloadIndicator_->setPosition({
+		Constants::Dash::IndicatorXPlayer1,
+		Constants::Dash::IndicatorY
+	});
+
+	dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
 }
 
 //--------------------------------------------------------------------------
@@ -103,10 +133,12 @@ void Character::updateCooldowns(float deltaTime)
 	if (dashCooldownTimer_ > 0.f) {
 		dashCooldownTimer_ -= deltaTime;
 
-		dashIndicator_.setFillColor(sf::Color::Red);
+		dashReadyIndicator_->setColor(sf::Color(255, 255, 255, 0));
+		dashReloadIndicator_->setColor(sf::Color::White);
 	}
 	else {
-		dashIndicator_.setFillColor(sf::Color::Green);
+		dashReadyIndicator_->setColor(sf::Color::White);
+		dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
 	}
 
 
@@ -173,7 +205,8 @@ void Character::update(float deltaTime)
 void Character::render(sf::RenderWindow& window) 
 {
 	window.draw(*sprite_);
-	window.draw(dashIndicator_);
+	window.draw(*dashReadyIndicator_);
+	window.draw(*dashReloadIndicator_);
 }
 
 //--------------------------------------------------------------------------
@@ -430,7 +463,8 @@ void Character::setLookingRight(bool lookingRight)
 
 void Character::setDashIndicatorPosition(float x, float y)
 {
-	dashIndicator_.setPosition({ x, y });
+	dashReloadIndicator_->setPosition({ x, y });
+	dashReadyIndicator_->setPosition({ x, y });
 }
 
 //--------------------------------------------------------------------------

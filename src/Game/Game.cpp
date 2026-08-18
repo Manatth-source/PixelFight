@@ -17,23 +17,25 @@ Game::Game()
 	ground_.setFillColor(Constants::Color::Ground);
 	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
 
+	const sf::Texture& dashReadyTexture = resourceManager_.getTexture("Assets/Sprites/Dash/DashReady.png");
+	const sf::Texture& dashReloadTexture = resourceManager_.getTexture("Assets/Sprites/Dash/DashReload.png");
 
 #if OFF
-	player1_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
-#endif
-#if OFF
-	player1_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"));
+	player1_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"), dashReadyTexture, dashReloadTexture);
 #endif
 #if ON
-	player1_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+	player1_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"), dashReadyTexture, dashReloadTexture);
+#endif
+#if OFF
+	player1_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"), dashReadyTexture, dashReloadTexture);
 #endif
 
 
 #if OFF
-	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"), dashReadyTexture, dashReloadTexture);
 #endif
 #if ON
-	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"));
+	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"), dashReadyTexture, dashReloadTexture);
 #endif
 
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
@@ -77,7 +79,10 @@ void Game::processEvents()
 void Game::update(float deltaTime)
 {
 	player1_->updateCooldowns(deltaTime);
+	player2_->updateCooldowns(deltaTime);
+
 	player1_->updatePhysics(deltaTime);
+	player2_->updatePhysics(deltaTime);
 
 	if (inputSource_.isActionPressed(InputAction::Jump)) {
 		player1_->jump();
@@ -107,15 +112,9 @@ void Game::update(float deltaTime)
 	player1_->setCrouching(inputSource_.isActionHeld(InputAction::Crouch));
 
 	player1_->update(deltaTime);
+	player2_->update(deltaTime);
 
 	inputSource_.resetFrame();
-
-
-	//*********************************************
-	player2_->updateCooldowns(deltaTime);
-	player2_->updatePhysics(deltaTime);
-	player2_->update(deltaTime);
-	//*********************************************
 
 		//Attack
 	if (!player1_->hasPerformedAttack() && player1_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
