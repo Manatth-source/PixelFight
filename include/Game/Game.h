@@ -7,6 +7,7 @@
 #include "Player/Goblin.h"
 #include "Player/Wizard.h"
 #include "Core/Constants.h"
+#include <optional>
 #include <memory>
 
 
@@ -14,7 +15,10 @@ class Game
 {
 private:
 	sf::RenderWindow window_;
-	sf::RectangleShape ground_;
+	//sf::RectangleShape ground_;
+
+	std::optional<sf::Sprite> background_;
+
 	sf::Clock clock_;
 	ResourceManager resourceManager_;
 

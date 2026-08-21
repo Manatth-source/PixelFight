@@ -1,13 +1,13 @@
 {
     "startHealth": 100.0,
-    "speed": 150.0,
-    "speedSit": 40.0,
+    "speed": 100.0,
+    "speedSit": 30.0,
 
     "dashDistance": 500.0,
     "dashCooldown": 4.0,
 
     "gravity": 1000.0,
-    "jumpStrength": -450.0,
+    "jumpStrength": -550.0,
     "jumpStartDuration": 0.2,
     "jumpLandDuration": 0.1,
 

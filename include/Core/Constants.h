@@ -11,11 +11,11 @@ namespace Constants
     }
 
     namespace Player {
-        constexpr float PositionY = 250.f;
+        constexpr float PositionY = 350.f;
         constexpr float PositionX = 0.f;
 
         constexpr int Size = 128;
-        constexpr float SpriteScale = 1.1f;
+        constexpr float SpriteScale = 1.6f;
     }
 
     namespace Attack {
@@ -26,7 +26,7 @@ namespace Constants
         constexpr float IndicatorSize = 60.f;
         constexpr float IndicatorXPlayer1 = 50.f;
         constexpr float IndicatorXPlayer2 = 1180.f;
-        constexpr float IndicatorY = 500.f;
+        constexpr float IndicatorY = 620.f;
 
         constexpr float DurationPhaseStartAndEnd = 0.15f;
     }

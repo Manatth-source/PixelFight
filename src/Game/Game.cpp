@@ -13,17 +13,17 @@ Game::Game()
 
 	window_.setKeyRepeatEnabled(false);
 
-	ground_.setSize({ static_cast<float>(Constants::Window::Width), Constants::Window::Height - Constants::Player::PositionY });
-	ground_.setFillColor(Constants::Color::Ground);
-	ground_.setPosition({ Constants::Player::PositionX, Constants::Player::PositionY + Constants::Player::Size });
+	background_ = sf::Sprite(resourceManager_.getTexture("Assets/Maps/Map1.png"));
 
 	const sf::Texture& dashReadyTexture = resourceManager_.getTexture("Assets/Sprites/Dash/DashReady.png");
 	const sf::Texture& dashReloadTexture = resourceManager_.getTexture("Assets/Sprites/Dash/DashReload.png");
 
-#if OFF
+
+
+#if ON
 	player1_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"), dashReadyTexture, dashReloadTexture);
 #endif
-#if ON
+#if OFF
 	player1_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"), dashReadyTexture, dashReloadTexture);
 #endif
 #if OFF
@@ -135,7 +135,7 @@ void Game::render()
 {
 	window_.clear(Constants::Color::Sky);
 
-	window_.draw(ground_);
+	window_.draw(*background_);
 
 
 	if (player1_->isAlive()) player1_->render(window_);
