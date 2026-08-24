@@ -6,5 +6,5 @@
 class Goblin : public Character
 {
 public:
-	Goblin(const sf::Texture& texture, const sf::Texture& dashReadyTexture, const sf::Texture& dashReloadTexture);
+	Goblin(const ResourceManager& resourceManager);
 };

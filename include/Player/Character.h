@@ -5,6 +5,7 @@
 #include "Player/CharacterStats.h"
 #include "Core/Constants.h"
 #include "Graphics/Animation.h"
+#include "Utils/ResourceManager.h"
 
 
 class Character
@@ -20,7 +21,10 @@ private:
 	void setLookingRight(bool lookingRight);
 
 protected:
+	const ResourceManager& resourceManager_;
+
 	std::optional<sf::Sprite> sprite_;
+	void initializeSprite();
 
 	Animation animation_;
 
@@ -53,6 +57,7 @@ protected:
 
 	std::optional<sf::Sprite> dashReadyIndicator_;
 	std::optional<sf::Sprite> dashReloadIndicator_;
+	void initializeDashIndicators();
 
 	// Jump
 	enum class JumpPhase {
@@ -95,7 +100,7 @@ protected:
 
 public:
 
-	Character(const sf::Texture& texture, const sf::Texture& dashReadyTexture, const sf::Texture& dashReloadTexture, const CharacterStats& stats);
+	Character(const ResourceManager& resourceManager, const CharacterStats& stats);
 	virtual ~Character() = default;
 
 	void update(float deltaTime);

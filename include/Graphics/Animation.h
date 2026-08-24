@@ -25,8 +25,10 @@ private:
     float timer_;
 
 public:
-    Animation(sf::Sprite& sprite);
+    Animation() = default;
+    ~Animation() = default;
 
+    void setSprite(sf::Sprite& sprite);
     void addFrame(const std::string& clipName, const sf::IntRect& frame, float duration);
     void play(const std::string& clipName);
     void update(float deltaTime);

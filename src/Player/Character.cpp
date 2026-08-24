@@ -7,15 +7,10 @@
 //--------------------------------------------------------------------------
 
 Character::Character(
-	const sf::Texture& texture,
-	const sf::Texture& dashReadyTexture,
-	const sf::Texture& dashReloadTexture,
+	const ResourceManager& resourceManager,
 	const CharacterStats& stats
 )
-	: sprite_(texture)
-	, dashReadyIndicator_(dashReadyTexture)
-	, dashReloadIndicator_(dashReloadTexture)
-	, animation_(*sprite_)
+	: resourceManager_(resourceManager)
 	, position_({ Constants::Player::PositionX, Constants::Player::PositionY })
 	, health_(stats.startHealth)
 	, isAlive_(true)
@@ -48,6 +43,8 @@ Character::Character(
 	, jumpLandDuration_(stats.jumpLandDuration)
 	, isLookingRight_(true)
 {
+#if 0
+	animation_.setSprite(*sprite_);
 	sprite_->setOrigin({ static_cast<float>(Constants::Player::Size) / 2.f, static_cast<float>(Constants::Player::Size) / 2.f });
 	sprite_->setScale({ Constants::Player::SpriteScale, Constants::Player::SpriteScale });
 	updateSpritePosition();
@@ -78,6 +75,17 @@ Character::Character(
 	});
 
 	dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
+#endif
+}
+
+//--------------------------------------------------------------------------
+
+void Character::initializeSprite()
+{
+	animation_.setSprite(*sprite_);
+	sprite_->setOrigin({ static_cast<float>(Constants::Player::Size) / 2.f, static_cast<float>(Constants::Player::Size) / 2.f });
+	sprite_->setScale({ Constants::Player::SpriteScale, Constants::Player::SpriteScale });
+	updateSpritePosition();
 }
 
 //--------------------------------------------------------------------------
@@ -277,6 +285,36 @@ void Character::performDash()
 
 	dashPhase_ = DashPhase::End;
 	updateSpritePosition();
+}
+
+void Character::initializeDashIndicators()
+{
+	const sf::Vector2f indicatorSize(
+		Constants::Dash::IndicatorSize,
+		Constants::Dash::IndicatorSize
+	);
+
+	dashReadyIndicator_->setScale({
+		indicatorSize.x / dashReadyIndicator_->getTexture().getSize().x,
+		indicatorSize.y / dashReadyIndicator_->getTexture().getSize().y
+		});
+
+	dashReloadIndicator_->setScale({
+		indicatorSize.x / dashReloadIndicator_->getTexture().getSize().x,
+		indicatorSize.y / dashReloadIndicator_->getTexture().getSize().y
+		});
+
+	dashReadyIndicator_->setPosition({
+		Constants::Dash::IndicatorXPlayer1,
+		Constants::Dash::IndicatorY
+		});
+
+	dashReloadIndicator_->setPosition({
+		Constants::Dash::IndicatorXPlayer1,
+		Constants::Dash::IndicatorY
+		});
+
+	dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
 }
 
 //--------------------------------------------------------------------------

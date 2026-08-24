@@ -3,8 +3,15 @@
 #include "Player/CharacterConfigLoader.h"
 
 
-Goblin::Goblin(const sf::Texture& texture, const sf::Texture& dashReadyTexture, const sf::Texture& dashReloadTexture) : Character(texture, dashReadyTexture, dashReloadTexture, CharacterConfigLoader::loadFromJson("Assets/Configs/Goblin_Stats.json"))
+Goblin::Goblin(const ResourceManager& resourceManager) : Character(resourceManager, CharacterConfigLoader::loadFromJson("Assets/Configs/Goblin_Stats.json"))
 {
+	sprite_.emplace(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"));
+	initializeSprite();
+
 	AnimationLoader::loadFromJson(animation_, "Assets/Sprites/Goblin/Goblin.json");
 	animation_.play("Idle");
+
+	dashReadyIndicator_.emplace(resourceManager_.getTexture("Assets/Sprites/Dash/DashReady.png"));
+	dashReloadIndicator_.emplace(resourceManager.getTexture("Assets/Sprites/Dash/DashReload.png"));
+	initializeDashIndicators();
 }

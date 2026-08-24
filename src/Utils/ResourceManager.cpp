@@ -2,7 +2,7 @@
 #include "Utils/Logger.h"
 #include <iostream>
 
-sf::Texture& ResourceManager::getTexture(const std::string& filepath) {
+sf::Texture& ResourceManager::getTexture(const std::string& filepath) const {
 	auto it = textures_.find(filepath); //{ key; value } or .end()
 	if (it != textures_.end())
 		return it->second;

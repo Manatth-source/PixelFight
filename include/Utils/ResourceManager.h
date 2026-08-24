@@ -9,8 +9,8 @@
 class ResourceManager
 {
 private:
-	std::unordered_map<std::string, sf::Texture> textures_;
+	mutable std::unordered_map<std::string, sf::Texture> textures_;
 
 public:
-	sf::Texture& getTexture(const std::string& filepath);
+	sf::Texture& getTexture(const std::string& filepath) const;
 };

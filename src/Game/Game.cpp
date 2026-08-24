@@ -15,27 +15,22 @@ Game::Game()
 
 	background_ = sf::Sprite(resourceManager_.getTexture("Assets/Maps/Map1.png"));
 
-	const sf::Texture& dashReadyTexture = resourceManager_.getTexture("Assets/Sprites/Dash/DashReady.png");
-	const sf::Texture& dashReloadTexture = resourceManager_.getTexture("Assets/Sprites/Dash/DashReload.png");
-
-
-
+#if OFF
+	player1_ = std::make_unique<Samurai>(resourceManager_);
+#endif
 #if ON
-	player1_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"), dashReadyTexture, dashReloadTexture);
+	player1_ = std::make_unique<Wizard>(resourceManager_);
 #endif
 #if OFF
-	player1_ = std::make_unique<Wizard>(resourceManager_.getTexture("Assets/Sprites/Wizard/Wizard.png"), dashReadyTexture, dashReloadTexture);
-#endif
-#if OFF
-	player1_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"), dashReadyTexture, dashReloadTexture);
+	player1_ = std::make_unique<Goblin>(resourceManager_);
 #endif
 
 
 #if ON
-	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"), dashReadyTexture, dashReloadTexture);
+	player2_ = std::make_unique<Goblin>(resourceManager_);
 #endif
 #if OFF
-	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"), dashReadyTexture, dashReloadTexture);
+	player2_ = std::make_unique<Samurai>(resourceManager_);
 #endif
 
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);

@@ -1,11 +1,9 @@
 #include "Graphics/Animation.h"
 
 
-Animation::Animation(sf::Sprite& sprite)
-    : sprite_(&sprite)
-    , currentFrame_(0)
-    , timer_(0.f)
+void Animation::setSprite(sf::Sprite& sprite)
 {
+    sprite_ = &sprite;
 }
 
 //--------------------------------------------------------------------------
