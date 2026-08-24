@@ -96,7 +96,7 @@ protected:
 public:
 
 	Character(const sf::Texture& texture, const sf::Texture& dashReadyTexture, const sf::Texture& dashReloadTexture, const CharacterStats& stats);
-	~Character();
+	virtual ~Character() = default;
 
 	void update(float deltaTime);
 

@@ -31,10 +31,10 @@ Game::Game()
 #endif
 
 
-#if OFF
+#if ON
 	player2_ = std::make_unique<Goblin>(resourceManager_.getTexture("Assets/Sprites/Goblin/Goblin.png"), dashReadyTexture, dashReloadTexture);
 #endif
-#if ON
+#if OFF
 	player2_ = std::make_unique<Samurai>(resourceManager_.getTexture("Assets/Sprites/Samurai/Samurai.png"), dashReadyTexture, dashReloadTexture);
 #endif
 
