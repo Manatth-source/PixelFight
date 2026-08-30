@@ -15,7 +15,6 @@ class Game
 {
 private:
 	sf::RenderWindow window_;
-	//sf::RectangleShape ground_;
 
 	std::optional<sf::Sprite> background_;
 

@@ -18,10 +18,10 @@ Game::Game()
 #if OFF
 	player1_ = std::make_unique<Samurai>(resourceManager_);
 #endif
-#if ON
+#if OFF
 	player1_ = std::make_unique<Wizard>(resourceManager_);
 #endif
-#if OFF
+#if ON
 	player1_ = std::make_unique<Goblin>(resourceManager_);
 #endif
 
@@ -82,8 +82,8 @@ void Game::update(float deltaTime)
 	if (inputSource_.isActionPressed(InputAction::Jump)) {
 		player1_->jump();
 	}
-	if (inputSource_.isActionPressed(InputAction::Attack)) {
-		player1_->attack();
+	if (inputSource_.isActionPressed(InputAction::BasicAttack)) {
+		player1_->basicAttack();
 	}
 
 	if (inputSource_.isActionPressed(InputAction::DashLeft)) {
@@ -106,6 +106,10 @@ void Game::update(float deltaTime)
 	player1_->setMoving(moved);
 	player1_->setCrouching(inputSource_.isActionHeld(InputAction::Crouch));
 
+	if (inputSource_.isActionHeld(InputAction::Shild)) {
+		player1_->shild();
+	}
+
 	player1_->update(deltaTime);
 	player2_->update(deltaTime);
 
@@ -113,12 +117,12 @@ void Game::update(float deltaTime)
 
 		//Attack
 	if (!player1_->hasPerformedAttack() && player1_->getAttackHitbox().findIntersection(player2_->getBodyBounds()).has_value()) {
-		player2_->takeDamage(player1_->getAttackDamage());
+		player2_->takeDamage(player1_->getAttackDamage(), player1_->getAttackTypes());
 		player1_->markHit();
 	}
 
 	if (!player2_->hasPerformedAttack() && player2_->getAttackHitbox().findIntersection(player1_->getBodyBounds()).has_value()) {
-		player1_->takeDamage(player2_->getAttackDamage());
+		player1_->takeDamage(player2_->getAttackDamage(), player2_->getAttackTypes());
 		player2_->markHit();
 	}
 
@@ -128,7 +132,7 @@ void Game::update(float deltaTime)
 
 void Game::render()
 {
-	window_.clear(Constants::Color::Sky);
+	window_.clear();
 
 	window_.draw(*background_);
 

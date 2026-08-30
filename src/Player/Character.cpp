@@ -42,40 +42,10 @@ Character::Character(
 	, jumpLandTimer_(0.f)
 	, jumpLandDuration_(stats.jumpLandDuration)
 	, isLookingRight_(true)
+	, shildPhase_(ShildPhase::None)
+	, shildCooldown_(Constants::Shild::Cooldown)
+	, shildCooldownTimer_(0.f)
 {
-#if 0
-	animation_.setSprite(*sprite_);
-	sprite_->setOrigin({ static_cast<float>(Constants::Player::Size) / 2.f, static_cast<float>(Constants::Player::Size) / 2.f });
-	sprite_->setScale({ Constants::Player::SpriteScale, Constants::Player::SpriteScale });
-	updateSpritePosition();
-
-	const sf::Vector2f indicatorSize(
-		Constants::Dash::IndicatorSize,
-		Constants::Dash::IndicatorSize
-	);
-
-	dashReadyIndicator_->setScale({
-		indicatorSize.x / dashReadyTexture.getSize().x,
-		indicatorSize.y / dashReadyTexture.getSize().y
-	});
-
-	dashReloadIndicator_->setScale({
-		indicatorSize.x / dashReadyTexture.getSize().x,
-		indicatorSize.y / dashReadyTexture.getSize().y
-	});
-
-	dashReadyIndicator_->setPosition({
-		Constants::Dash::IndicatorXPlayer1,
-		Constants::Dash::IndicatorY
-	});
-
-	dashReloadIndicator_->setPosition({
-		Constants::Dash::IndicatorXPlayer1,
-		Constants::Dash::IndicatorY
-	});
-
-	dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -91,7 +61,6 @@ void Character::initializeSprite()
 //--------------------------------------------------------------------------
 //--------------- Update ---------------
 
-// private
 void Character::updateAnimationState()
 {
 	if (!isAlive_) {
@@ -122,6 +91,9 @@ void Character::updateAnimationState()
 	}
 	else if (isMoving_) {
 		animation_.play("Walk");
+	}
+	else if (shildPhase_ == ShildPhase::Active) {
+		animation_.play("Shild");
 	}
 	else {
 		animation_.play("Idle");
@@ -185,6 +157,15 @@ void Character::updateCooldowns(float deltaTime)
 		if (jumpLandTimer_ <= 0.f) {
 			jumpPhase_ = JumpPhase::None;
 		}
+	}
+
+	//Shild
+	if (shildCooldownTimer_ > 0.f) {
+		shildCooldownTimer_ -= deltaTime;
+	}
+
+	if (shildPhase_ == ShildPhase::Active) {
+		shildPhase_ = ShildPhase::None;
 	}
 }
 
@@ -322,7 +303,25 @@ void Character::initializeDashIndicators()
 
 void Character::shild()
 {
+	if (dashPhase_ != DashPhase::None || jumpPhase_ != JumpPhase::None)
+		return;
+	
 
+	if (isMoving_ || isCrouching_)
+		return;
+
+
+	if (shildCooldownTimer_ > 0.f)
+		return;
+
+
+	shildPhase_ = ShildPhase::Active;
+}
+
+void Character::breakShield()
+{
+	shildPhase_ = ShildPhase::None;
+	shildCooldownTimer_ = shildCooldown_;
 }
 
 //--------------------------------------------------------------------------
@@ -403,41 +402,42 @@ float Character::getAttackDamage() const
 }
 
 
-void Character::attack() 
+void Character::basicAttack()
 {
-	if (dashPhase_ != DashPhase::None) {
+	if (dashPhase_ != DashPhase::None) 
 		return;
-	}
 
-	if (attackCooldownTimer_ > 0.f) {
+	if (attackCooldownTimer_ > 0.f)
 		return;
-	}
 
+	attackTypes_ = AttackTypes::basicAttack;
 	isAttacking_ = true;
 	attackTimer_ = attackDuration_;
 	attackCooldownTimer_ = attackCooldown_;
 	hasPerformedAttack_ = false;
 
-	Logger::log("Attack started");
+	Logger::log("Basic attack started");
 }
 
 
 sf::FloatRect Character::getAttackHitbox() const
 {
-	if (!isAttacking_) {
+	if (!isAttacking_)
 		return sf::FloatRect({ 0.f, 0.f }, { 0.f, 0.f });
-	}
+
+	float halfSize = static_cast<float>(Constants::Player::Size) / 2.f;
+	float newWidth = halfSize + Constants::Attack::HitboxWidth;
 
 	float hitboxX;
 
-	if (isLookingRight_) {
-		hitboxX = position_.x + Constants::Player::Size;
-	}
-	else {
-		hitboxX = position_.x - Constants::Attack::HitboxWidth;
-	}
 
-	return sf::FloatRect({ hitboxX, position_.y }, { Constants::Attack::HitboxWidth, static_cast<float>(Constants::Player::Size) });
+	if (isLookingRight_)
+		hitboxX = position_.x + halfSize;
+	else
+		hitboxX = position_.x - Constants::Attack::HitboxWidth;
+
+
+	return sf::FloatRect({ hitboxX, position_.y }, { newWidth, static_cast<float>(Constants::Player::Size) });
 }
 
 
@@ -459,12 +459,25 @@ void Character::markHit()
 }
 
 
-void Character::takeDamage(float value)
+void Character::takeDamage(float value, AttackTypes attackerType)
 {
-	this->health_ = std::max(health_ - value, 0.f);
+	if (shildPhase_ == ShildPhase::Active && attackerType != AttackTypes::basicAttack)
+		return; // skill is blocked by a shield
+
+	if (shildPhase_ == ShildPhase::Active && attackerType == AttackTypes::basicAttack)
+		breakShield(); // basic attack pierces the shield
+
+
+	health_ = std::max(health_ - value, 0.f);
 	if (health_ == 0) isAlive_ = false;
 }
 
+Character::AttackTypes Character::getAttackTypes() const
+{
+	return attackTypes_;
+}
+
+//--------------------------------------------------------------------------
 
 bool Character::isAlive() const
 {

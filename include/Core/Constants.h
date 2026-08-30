@@ -31,6 +31,10 @@ namespace Constants
         constexpr float DurationPhaseStartAndEnd = 0.15f;
     }
 
+    namespace Shild {
+        constexpr float Cooldown = 4.f;
+    }
+
     namespace UI {
         constexpr float VictoryPlaqueHeight = 35.f;
         constexpr float VictoryPlaqueWidthMargin = 700.f;
@@ -39,8 +43,6 @@ namespace Constants
     }
 
     namespace Color {
-        const sf::Color Ground(55, 45, 38);
-        const sf::Color Sky(135, 206, 235);
         const sf::Color Plaque = sf::Color::Yellow;
     }
 }

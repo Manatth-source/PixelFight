@@ -6,9 +6,10 @@ KeyboardInputSource::KeyboardInputSource()
 	heldBindings_[InputAction::MoveLeft] = { sf::Keyboard::Key::A };
 	heldBindings_[InputAction::MoveRight] = { sf::Keyboard::Key::D };
 	heldBindings_[InputAction::Crouch] = { sf::Keyboard::Key::S };
+	heldBindings_[InputAction::Shild] = { sf::Keyboard::Key::F };
 
 	pressedBindings_[InputAction::Jump] = { sf::Keyboard::Key::W, sf::Keyboard::Key::Space };
-	pressedBindings_[InputAction::Attack] = { sf::Keyboard::Key::F };
+	pressedBindings_[InputAction::BasicAttack] = { sf::Keyboard::Key::Q };
 }
 
 

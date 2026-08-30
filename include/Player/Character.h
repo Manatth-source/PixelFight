@@ -14,11 +14,16 @@ private:
 	// Update
 	void updateAnimationState();
 
+	void updateSpritePosition();
+
 	//Dash
 	virtual void performDash();
 
 	//Move
 	void setLookingRight(bool lookingRight);
+
+	//Shild
+	void breakShield();
 
 protected:
 	const ResourceManager& resourceManager_;
@@ -89,6 +94,15 @@ protected:
 	bool isMoving_;
 
 	//Attack
+	enum class AttackTypes {
+		basicAttack,
+		firstSkill,
+		secondSkill,
+		ultimate
+
+	};
+
+	AttackTypes attackTypes_;
 	sf::RectangleShape attackHitbox_;
 	bool isAttacking_;
 	bool hasPerformedAttack_;
@@ -97,6 +111,16 @@ protected:
 	float attackCooldown_;
 	float attackCooldownTimer_;
 	float attackDamage_;
+
+	//Shild
+	enum class ShildPhase {
+		None,
+		Active
+	};
+
+	ShildPhase shildPhase_;
+	float shildCooldown_;
+	float shildCooldownTimer_;
 
 public:
 
@@ -108,7 +132,6 @@ public:
 	virtual void render(sf::RenderWindow& window);
 
 	void setPosition(float x, float y);
-	void updateSpritePosition();
 
 	// Move
 	void moveLeft(float deltaTime);
@@ -134,20 +157,22 @@ public:
 	// Attack
 	//---
 	float getAttackDamage() const;
+	AttackTypes getAttackTypes() const;
 
 	virtual void passive_skill();
+	void basicAttack();
 	virtual void first_skill();
 	virtual void second_skill();
 	virtual void ultimate();
 
-	void attack();
 	sf::FloatRect getAttackHitbox() const;
 	sf::FloatRect getBodyBounds() const;
 
 	bool hasPerformedAttack() const;
 	void markHit();
 
-	void takeDamage(float value);
+	void takeDamage(float value, AttackTypes attackerType);
+	//---
 	bool isAlive() const;
 	//---
 

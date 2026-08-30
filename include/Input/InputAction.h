@@ -7,9 +7,10 @@ enum class InputAction
 	MoveRight,
 	Jump,
 	Crouch,
+	Shild,
 	DashLeft,
 	DashRight,
-	Attack,
+	BasicAttack,
 	FirstSkill,
 	SecondSkill,
 	Ultimate
