@@ -60,9 +60,6 @@ protected:
 	float dashCooldown_;
 	float dashCooldownTimer_;
 
-	std::optional<sf::Sprite> dashReadyIndicator_;
-	std::optional<sf::Sprite> dashReloadIndicator_;
-	void initializeDashIndicators();
 
 	// Jump
 	enum class JumpPhase {
@@ -140,6 +137,7 @@ public:
 	// Dash
 	virtual void dashLeft();
 	virtual void dashRight();
+	bool isDashReady() const;
 
 	//Shild
 	virtual void shild();
@@ -177,6 +175,4 @@ public:
 	//---
 
 	void setMoving(bool moving);
-
-	void setDashIndicatorPosition(float x, float y);
 };

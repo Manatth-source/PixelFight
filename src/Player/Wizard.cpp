@@ -10,8 +10,4 @@ Wizard::Wizard(const ResourceManager& resourceManager) : Character(resourceManag
 
 	AnimationLoader::loadFromJson(animation_, "Assets/Sprites/Wizard/Wizard.json");
 	animation_.play("Idle");
-
-	dashReadyIndicator_.emplace(resourceManager_.getTexture("Assets/Sprites/Dash/DashReady.png"));
-	dashReloadIndicator_.emplace(resourceManager.getTexture("Assets/Sprites/Dash/DashReload.png"));
-	initializeDashIndicators();
 }

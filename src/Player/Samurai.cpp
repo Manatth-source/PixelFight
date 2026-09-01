@@ -10,8 +10,4 @@ Samurai::Samurai(const ResourceManager& resourceManager) : Character(resourceMan
 
 	AnimationLoader::loadFromJson(animation_, "Assets/Sprites/Samurai/Samurai.json");
 	animation_.play("Idle");
-
-	dashReadyIndicator_.emplace(resourceManager_.getTexture("Assets/Sprites/Dash/DashReady.png"));
-	dashReloadIndicator_.emplace(resourceManager.getTexture("Assets/Sprites/Dash/DashReload.png"));
-	initializeDashIndicators();
 }

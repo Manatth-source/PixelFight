@@ -104,19 +104,12 @@ void Character::updateAnimationState()
 void Character::updateCooldowns(float deltaTime)
 {
 	//Dash
-	if (dashCooldownTimer_ > 0.f) {
+	if (dashCooldownTimer_ > 0.f) 
 		dashCooldownTimer_ -= deltaTime;
 
-		dashReadyIndicator_->setColor(sf::Color(255, 255, 255, 0));
-		dashReloadIndicator_->setColor(sf::Color::White);
-	}
-	else {
-		dashReadyIndicator_->setColor(sf::Color::White);
-		dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
-	}
 
-
-	if (!(dashPhase_ == DashPhase::None)) dashTimer_ += deltaTime;
+	if (!(dashPhase_ == DashPhase::None)) 
+		dashTimer_ += deltaTime;
 
 
 	if (dashPhase_ == DashPhase::Start && dashTimer_ >= Constants::Dash::DurationPhaseStartAndEnd) {
@@ -188,8 +181,6 @@ void Character::update(float deltaTime)
 void Character::render(sf::RenderWindow& window) 
 {
 	window.draw(*sprite_);
-	window.draw(*dashReadyIndicator_);
-	window.draw(*dashReloadIndicator_);
 }
 
 //--------------------------------------------------------------------------
@@ -259,6 +250,12 @@ void Character::dashRight()
 }
 
 
+bool Character::isDashReady() const
+{
+	return dashCooldownTimer_ <= 0.f;
+}
+
+
 void Character::performDash()
 {
 	if (!dashToRight_) position_.x = std::max(position_.x - dashDistance_, 0.f);
@@ -266,36 +263,6 @@ void Character::performDash()
 
 	dashPhase_ = DashPhase::End;
 	updateSpritePosition();
-}
-
-void Character::initializeDashIndicators()
-{
-	const sf::Vector2f indicatorSize(
-		Constants::Dash::IndicatorSize,
-		Constants::Dash::IndicatorSize
-	);
-
-	dashReadyIndicator_->setScale({
-		indicatorSize.x / dashReadyIndicator_->getTexture().getSize().x,
-		indicatorSize.y / dashReadyIndicator_->getTexture().getSize().y
-		});
-
-	dashReloadIndicator_->setScale({
-		indicatorSize.x / dashReloadIndicator_->getTexture().getSize().x,
-		indicatorSize.y / dashReloadIndicator_->getTexture().getSize().y
-		});
-
-	dashReadyIndicator_->setPosition({
-		Constants::Dash::IndicatorXPlayer1,
-		Constants::Dash::IndicatorY
-		});
-
-	dashReloadIndicator_->setPosition({
-		Constants::Dash::IndicatorXPlayer1,
-		Constants::Dash::IndicatorY
-		});
-
-	dashReloadIndicator_->setColor(sf::Color(255, 255, 255, 0));
 }
 
 //--------------------------------------------------------------------------
@@ -502,14 +469,6 @@ void Character::setLookingRight(bool lookingRight)
 
 	float scaleX = isLookingRight_ ? Constants::Player::SpriteScale : -Constants::Player::SpriteScale;
 	sprite_->setScale({ scaleX, Constants::Player::SpriteScale });
-}
-
-//--------------------------------------------------------------------------
-
-void Character::setDashIndicatorPosition(float x, float y)
-{
-	dashReloadIndicator_->setPosition({ x, y });
-	dashReadyIndicator_->setPosition({ x, y });
 }
 
 //--------------------------------------------------------------------------
