@@ -26,7 +26,7 @@ DashIndicator::DashIndicator(const ResourceManager& resourceManager, float x, fl
 	setPosition(x, y);
 
 	// by default, the dash is ready — the reload indicator is hidden
-	reloadSprite_->setColor(sf::Color(255, 255, 255, 0));
+	reloadSprite_->setColor(sf::Color(sf::Color::Transparent));
 }
 
 //--------------------------------------------------------------------------
@@ -43,10 +43,10 @@ void DashIndicator::update(bool isReady)
 {
 	if (isReady) {
 		readySprite_->setColor(sf::Color::White);
-		reloadSprite_->setColor(sf::Color(255, 255, 255, 0));
+		reloadSprite_->setColor(sf::Color(sf::Color::Transparent));
 	}
 	else {
-		readySprite_->setColor(sf::Color(255, 255, 255, 0));
+		readySprite_->setColor(sf::Color(sf::Color::Transparent));
 		reloadSprite_->setColor(sf::Color::White);
 	}
 }
