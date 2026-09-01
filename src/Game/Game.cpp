@@ -4,7 +4,7 @@
 #define OFF 0
 
 
-Game::Game()
+Game::Game() : hud_(resourceManager_)
 {
 	window_.create(
 		sf::VideoMode({ Constants::Window::Width, Constants::Window::Height }),
@@ -18,10 +18,10 @@ Game::Game()
 #if OFF
 	player1_ = std::make_unique<Samurai>(resourceManager_);
 #endif
-#if OFF
+#if ON
 	player1_ = std::make_unique<Wizard>(resourceManager_);
 #endif
-#if ON
+#if OFF
 	player1_ = std::make_unique<Goblin>(resourceManager_);
 #endif
 
@@ -34,7 +34,6 @@ Game::Game()
 #endif
 
 	player2_->setPosition(Constants::Window::Width - Constants::Player::Size, Constants::Player::PositionY);
-	player2_->setDashIndicatorPosition(Constants::Dash::IndicatorXPlayer2, Constants::Dash::IndicatorY);
 
 	victory_plaque_.setSize({ static_cast<float>(Constants::Window::Width) - Constants::UI::VictoryPlaqueWidthMargin, Constants::UI::VictoryPlaqueHeight });
 	victory_plaque_.setFillColor(Constants::Color::Plaque);
@@ -126,6 +125,8 @@ void Game::update(float deltaTime)
 		player2_->markHit();
 	}
 
+	hud_.update(*player1_, *player2_);
+
 }
 
 //--------------------------------------------------------------------------
@@ -143,6 +144,8 @@ void Game::render()
 
 	if (!player1_->isAlive() || !player2_->isAlive())
 		window_.draw(victory_plaque_);
+
+	hud_.render(window_);
 
 	window_.display();
 }

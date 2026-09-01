@@ -7,6 +7,7 @@
 #include "Player/Goblin.h"
 #include "Player/Wizard.h"
 #include "Core/Constants.h"
+#include "UI/HUD.h"
 #include <optional>
 #include <memory>
 
@@ -20,6 +21,7 @@ private:
 
 	sf::Clock clock_;
 	ResourceManager resourceManager_;
+	HUD hud_;
 
 	KeyboardInputSource inputSource_;
 
