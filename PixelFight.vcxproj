@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Components\Movement.cpp" />
     <ClCompile Include="src\Game\Game.cpp" />
     <ClCompile Include="src\Graphics\Animation.cpp" />
     <ClCompile Include="src\Graphics\AnimationLoader.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="src\Utils\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Components\Movement.h" />
     <ClInclude Include="include\Core\Constants.h" />
     <ClInclude Include="include\Game\Game.h" />
     <ClInclude Include="include\Graphics\Animation.h" />

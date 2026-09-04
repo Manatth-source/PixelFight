@@ -92,17 +92,13 @@ void Game::update(float deltaTime)
 		player1_->dashRight();
 	}
 
-	bool moved = false;
 	if (inputSource_.isActionHeld(InputAction::MoveLeft)) {
 		player1_->moveLeft(deltaTime);
-		moved = true;
 	}
 	if (inputSource_.isActionHeld(InputAction::MoveRight)) {
 		player1_->moveRight(deltaTime);
-		moved = true;
 	}
 
-	player1_->setMoving(moved);
 	player1_->setCrouching(inputSource_.isActionHeld(InputAction::Crouch));
 
 	if (inputSource_.isActionHeld(InputAction::Shild)) {
@@ -151,3 +147,5 @@ void Game::render()
 }
 
 //--------------------------------------------------------------------------
+
+// ECS / EC

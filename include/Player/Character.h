@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include "Player/CharacterStats.h"
+#include "Components/Movement.h"
 #include "Core/Constants.h"
 #include "Graphics/Animation.h"
 #include "Utils/ResourceManager.h"
@@ -16,12 +17,6 @@ private:
 
 	void updateSpritePosition();
 
-	//Dash
-	virtual void performDash();
-
-	//Move
-	void setLookingRight(bool lookingRight);
-
 	//Shild
 	void breakShield();
 
@@ -32,63 +27,10 @@ protected:
 	void initializeSprite();
 
 	Animation animation_;
-
-	sf::Vector2f position_;
+	Movement movement_;
 
 	float health_;
 	bool isAlive_;
-
-	bool isLookingRight_;
-
-	float baseSpeed_;
-	float speed_;
-
-	//Dach
-	enum class DashPhase
-	{
-		None,
-		Start,
-		Move,
-		End
-	};
-
-	DashPhase dashPhase_;
-
-	bool dashToRight_;
-	float dashTimer_;
-	float dashDistance_;
-	float dashCooldown_;
-	float dashCooldownTimer_;
-
-
-	// Jump
-	enum class JumpPhase {
-		None,
-		Start,
-		Loop,
-		Land
-	};
-
-	JumpPhase jumpPhase_;
-
-	float jumpStartTimer_;
-	float jumpStartDuration_;
-
-	float jumpLandTimer_;
-	float jumpLandDuration_;
-
-	float verticalVelocity_;	// vertical speed of character at the moment
-	bool isOnGround_;
-	float groundY_;
-	float gravity_;				// gravity force, pixels per second
-	float jumpStrength_;		// initial vertical velocity during repulsion
-
-	//Sit
-	bool isCrouching_;
-	float speedSit_;
-
-	//Move
-	bool isMoving_;
 
 	//Attack
 	enum class AttackTypes {
@@ -96,7 +38,6 @@ protected:
 		firstSkill,
 		secondSkill,
 		ultimate
-
 	};
 
 	AttackTypes attackTypes_;
@@ -157,11 +98,13 @@ public:
 	float getAttackDamage() const;
 	AttackTypes getAttackTypes() const;
 
-	virtual void passive_skill();
 	void basicAttack();
-	virtual void first_skill();
-	virtual void second_skill();
-	virtual void ultimate();
+#if 0
+	virtual void passive_skill() = 0;
+	virtual void first_skill() = 0;
+	virtual void second_skill() = 0;
+	virtual void ultimate() = 0;
+#endif
 
 	sf::FloatRect getAttackHitbox() const;
 	sf::FloatRect getBodyBounds() const;
@@ -174,5 +117,4 @@ public:
 	bool isAlive() const;
 	//---
 
-	void setMoving(bool moving);
 };

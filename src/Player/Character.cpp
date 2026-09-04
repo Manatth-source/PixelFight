@@ -11,22 +11,9 @@ Character::Character(
 	const CharacterStats& stats
 )
 	: resourceManager_(resourceManager)
-	, position_({ Constants::Player::PositionX, Constants::Player::PositionY })
+	, movement_({ Constants::Player::PositionX, Constants::Player::PositionY }, Constants::Player::PositionY, stats)
 	, health_(stats.startHealth)
 	, isAlive_(true)
-	, baseSpeed_(stats.speed)
-	, speed_(stats.speed)
-	, speedSit_(stats.speedSit)
-	, dashToRight_(true)
-	, dashTimer_(0.f)
-	, dashDistance_(stats.dashDistance)
-	, dashCooldown_(stats.dashCooldown)
-	, dashCooldownTimer_(0.0f)
-	, verticalVelocity_(0.f)
-	, isOnGround_(true)
-	, groundY_(Constants::Player::PositionY)
-	, gravity_(stats.gravity)
-	, jumpStrength_(stats.jumpStrength)
 	, isAttacking_(false)
 	, attackTimer_(0.f)
 	, attackDuration_(stats.attackDuration)
@@ -34,14 +21,6 @@ Character::Character(
 	, attackCooldownTimer_(0.f)
 	, attackDamage_(stats.attackDamage)
 	, hasPerformedAttack_(false)
-	, isCrouching_(false)
-	, isMoving_(false)
-	, jumpPhase_(JumpPhase::None)
-	, jumpStartTimer_(0.f)
-	, jumpStartDuration_(stats.jumpStartDuration)
-	, jumpLandTimer_(0.f)
-	, jumpLandDuration_(stats.jumpLandDuration)
-	, isLookingRight_(true)
 	, shildPhase_(ShildPhase::None)
 	, shildCooldown_(Constants::Shild::Cooldown)
 	, shildCooldownTimer_(0.f)
@@ -64,32 +43,28 @@ void Character::initializeSprite()
 void Character::updateAnimationState()
 {
 	if (!isAlive_) {
-		speed_ = 0;
 		animation_.play("Dead");
 		return;
 	}
-	else if (dashPhase_ == DashPhase::Start || dashPhase_ == DashPhase::End) {
+	else if (movement_.getDashPhase() == Movement::DashPhase::Start || movement_.getDashPhase() == Movement::DashPhase::End) {
 		animation_.play("Dash");
 		return;
 	}
-	else if (isCrouching_ && jumpPhase_ == JumpPhase::None) {
-		speed_ = speedSit_;
+	else if (movement_.isCrouching() && movement_.getJumpPhase() == Movement::JumpPhase::None) {
 		animation_.play("Sit");
 		return;
 	}
 
-	speed_ = baseSpeed_;
-
-	if (jumpPhase_ == JumpPhase::Start) {
+	if (movement_.getJumpPhase() == Movement::JumpPhase::Start) {
 		animation_.play("Jump_Start");
 	}
-	else if (jumpPhase_ == JumpPhase::Loop) {
+	else if (movement_.getJumpPhase() == Movement::JumpPhase::Loop) {
 		animation_.play("Jump_Loop");
 	}
-	else if (jumpPhase_ == JumpPhase::Land) {
+	else if (movement_.getJumpPhase() == Movement::JumpPhase::Land) {
 		animation_.play("Jump_Land");
 	}
-	else if (isMoving_) {
+	else if (movement_.isMoving()) {
 		animation_.play("Walk");
 	}
 	else if (shildPhase_ == ShildPhase::Active) {
@@ -103,26 +78,6 @@ void Character::updateAnimationState()
 
 void Character::updateCooldowns(float deltaTime)
 {
-	//Dash
-	if (dashCooldownTimer_ > 0.f) 
-		dashCooldownTimer_ -= deltaTime;
-
-
-	if (!(dashPhase_ == DashPhase::None)) 
-		dashTimer_ += deltaTime;
-
-
-	if (dashPhase_ == DashPhase::Start && dashTimer_ >= Constants::Dash::DurationPhaseStartAndEnd) {
-		dashTimer_ = 0.f;
-		dashPhase_ = DashPhase::Move;
-	}
-	else if (dashPhase_ == DashPhase::Move) {
-		performDash();
-	}
-	else if (dashPhase_ == DashPhase::End && dashTimer_ >= Constants::Dash::DurationPhaseStartAndEnd) {
-		dashTimer_ = 0.f;
-		dashPhase_ = DashPhase::None;
-	}
 
 	//Attack
 	if (attackCooldownTimer_ > 0.f) {
@@ -133,22 +88,6 @@ void Character::updateCooldowns(float deltaTime)
 		attackTimer_ -= deltaTime;
 		if (attackTimer_ <= 0.f) {
 			isAttacking_ = false;
-		}
-	}
-
-	//Jump
-	if (jumpPhase_ == JumpPhase::Start) {
-		jumpStartTimer_ -= deltaTime;
-		if (jumpStartTimer_ <= 0.f) {
-			jumpPhase_ = JumpPhase::Loop;
-		}
-	}
-
-
-	if (jumpPhase_ == JumpPhase::Land) {
-		jumpLandTimer_ -= deltaTime;
-		if (jumpLandTimer_ <= 0.f) {
-			jumpPhase_ = JumpPhase::None;
 		}
 	}
 
@@ -164,13 +103,17 @@ void Character::updateCooldowns(float deltaTime)
 
 
 void Character::updateSpritePosition() {
-	sf::Vector2f center = position_ + sf::Vector2(Constants::Player::Size / 2.f, Constants::Player::Size / 2.f);
+	sf::Vector2f position = movement_.getPosition();
+	sf::Vector2f center = position + sf::Vector2f(Constants::Player::Size / 2.f, Constants::Player::Size / 2.f);
 	sprite_->setPosition(center);
+
+	float scaleX = movement_.isLookingRight() ? Constants::Player::SpriteScale : -Constants::Player::SpriteScale;
+	sprite_->setScale({ scaleX, Constants::Player::SpriteScale });
 }
 
 //--------------------------------------------------------------------------
 
-void Character::update(float deltaTime) 
+void Character::update(float deltaTime)
 {
 	updateAnimationState();
 	animation_.update(deltaTime);
@@ -178,7 +121,7 @@ void Character::update(float deltaTime)
 
 //--------------------------------------------------------------------------
 
-void Character::render(sf::RenderWindow& window) 
+void Character::render(sf::RenderWindow& window)
 {
 	window.draw(*sprite_);
 }
@@ -187,35 +130,29 @@ void Character::render(sf::RenderWindow& window)
 
 void Character::setPosition(float x, float y)
 {
-	position_ = { x, y };
+	movement_.setPosition({ x, y });
 	updateSpritePosition();
 }
 
 //--------------------------------------------------------------------------
 //--------------- Move ---------------
 
-void Character::moveLeft(float deltaTime) 
+void Character::moveLeft(float deltaTime)
 {
-
-	if (dashPhase_ != DashPhase::None) {
+	if (!isAlive_)
 		return;
-	}
 
-	position_.x = (position_.x - speed_ * deltaTime > 0 ? position_.x - speed_ * deltaTime : 0);
-	setLookingRight(false);
+	movement_.moveLeft(deltaTime);
 	updateSpritePosition();
 }
 
 
-void Character::moveRight(float deltaTime) 
+void Character::moveRight(float deltaTime)
 {
-
-	if (dashPhase_ != DashPhase::None) {
+	if (!isAlive_)
 		return;
-	}
 
-	position_.x = (position_.x + speed_ * deltaTime < Constants::Window::Width - Constants::Player::Size ? position_.x + speed_ * deltaTime : Constants::Window::Width - Constants::Player::Size);
-	setLookingRight(true);
+	movement_.moveRight(deltaTime);
 	updateSpritePosition();
 }
 
@@ -224,45 +161,19 @@ void Character::moveRight(float deltaTime)
 
 void Character::dashLeft()
 {
-	if (dashCooldownTimer_ > 0.f || dashPhase_ != DashPhase::None) {
-		return;
-	}
-
-	dashPhase_ = DashPhase::Start;
-	dashTimer_ = 0.f;
-	dashToRight_ = false;
-
-	dashCooldownTimer_ = dashCooldown_;
+	movement_.dashLeft();
 }
 
 
 void Character::dashRight()
 {
-	if (dashCooldownTimer_ > 0.f || dashPhase_ != DashPhase::None) {
-		return;
-	}
-
-	dashPhase_ = DashPhase::Start;
-	dashTimer_ = 0.f;
-	dashToRight_ = true;
-
-	dashCooldownTimer_ = dashCooldown_;
+	movement_.dashRight();
 }
 
 
 bool Character::isDashReady() const
 {
-	return dashCooldownTimer_ <= 0.f;
-}
-
-
-void Character::performDash()
-{
-	if (!dashToRight_) position_.x = std::max(position_.x - dashDistance_, 0.f);
-	else position_.x = std::min(position_.x + dashDistance_, static_cast<float>(Constants::Window::Width - Constants::Player::Size));
-
-	dashPhase_ = DashPhase::End;
-	updateSpritePosition();
+	return movement_.isDashReady();
 }
 
 //--------------------------------------------------------------------------
@@ -270,11 +181,11 @@ void Character::performDash()
 
 void Character::shild()
 {
-	if (dashPhase_ != DashPhase::None || jumpPhase_ != JumpPhase::None)
+	if (movement_.isDashing() || movement_.getJumpPhase() != Movement::JumpPhase::None)
 		return;
-	
 
-	if (isMoving_ || isCrouching_)
+
+	if (movement_.isMoving() || movement_.isCrouching())
 		return;
 
 
@@ -296,70 +207,24 @@ void Character::breakShield()
 
 void Character::jump()
 {
-	if (dashPhase_ != DashPhase::None) {
-		return;
-	}
-
-	if (!isOnGround_) {
-		return;
-	}
-
-	verticalVelocity_ = jumpStrength_;
-	isOnGround_ = false;
-
-	jumpPhase_ = JumpPhase::Start;
-	jumpStartTimer_ = jumpStartDuration_;
+	movement_.jump();
 }
 
 
-void Character::updatePhysics(float deltaTime) 
+void Character::updatePhysics(float deltaTime)
 {
-	if (dashPhase_ != DashPhase::None) {
-		return;
-	}
-
-	if (!isOnGround_) {
-		verticalVelocity_ += gravity_ * deltaTime;
-		position_.y += verticalVelocity_ * deltaTime;
-
-
-		if (position_.y >= groundY_) {
-			position_.y = groundY_;
-			verticalVelocity_ = 0.f;
-			isOnGround_ = true;
-			jumpPhase_ = JumpPhase::Land;
-			jumpLandTimer_ = jumpLandDuration_;
-		}
-
-		updateSpritePosition();
-	}
+	movement_.update(deltaTime);
+	updateSpritePosition();
 }
 
 //--------------------------------------------------------------------------
 
 void Character::setCrouching(bool crouching)
 {
-	isCrouching_ = crouching;
+	movement_.setCrouching(crouching);
 }
 
 //--------------------------------------------------------------------------
-// Skills
-
-void Character::passive_skill() 
-{
-}
-
-void Character::first_skill()
-{
-}
-
-void Character::second_skill()
-{
-}
-
-void Character::ultimate()
-{
-}
 
 // --------------- Attack ---------------
 
@@ -371,7 +236,7 @@ float Character::getAttackDamage() const
 
 void Character::basicAttack()
 {
-	if (dashPhase_ != DashPhase::None) 
+	if (movement_.isDashing())
 		return;
 
 	if (attackCooldownTimer_ > 0.f)
@@ -395,22 +260,23 @@ sf::FloatRect Character::getAttackHitbox() const
 	float halfSize = static_cast<float>(Constants::Player::Size) / 2.f;
 	float newWidth = halfSize + Constants::Attack::HitboxWidth;
 
+	sf::Vector2f position = movement_.getPosition();
 	float hitboxX;
 
 
-	if (isLookingRight_)
-		hitboxX = position_.x + halfSize;
+	if (movement_.isLookingRight())
+		hitboxX = position.x + halfSize;
 	else
-		hitboxX = position_.x - Constants::Attack::HitboxWidth;
+		hitboxX = position.x - Constants::Attack::HitboxWidth;
 
 
-	return sf::FloatRect({ hitboxX, position_.y }, { newWidth, static_cast<float>(Constants::Player::Size) });
+	return sf::FloatRect({ hitboxX, position.y }, { newWidth, static_cast<float>(Constants::Player::Size) });
 }
 
 
 sf::FloatRect Character::getBodyBounds() const
 {
-	return sf::FloatRect(position_, { static_cast<float>(Constants::Player::Size), static_cast<float>(Constants::Player::Size) });
+	return sf::FloatRect(movement_.getPosition(), { static_cast<float>(Constants::Player::Size), static_cast<float>(Constants::Player::Size) });
 }
 
 
@@ -449,26 +315,6 @@ Character::AttackTypes Character::getAttackTypes() const
 bool Character::isAlive() const
 {
 	return isAlive_;
-}
-
-//--------------------------------------------------------------------------
-
-void Character::setMoving(bool moving)
-{
-	isMoving_ = moving;
-}
-
-//--------------------------------------------------------------------------
-
-void Character::setLookingRight(bool lookingRight)
-{
-	if (isLookingRight_ == lookingRight) 
-		return;
-
-	isLookingRight_ = lookingRight;
-
-	float scaleX = isLookingRight_ ? Constants::Player::SpriteScale : -Constants::Player::SpriteScale;
-	sprite_->setScale({ scaleX, Constants::Player::SpriteScale });
 }
 
 //--------------------------------------------------------------------------
