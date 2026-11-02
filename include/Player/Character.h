@@ -4,6 +4,8 @@
 #include <optional>
 #include "Player/CharacterStats.h"
 #include "Components/Movement.h"
+#include "Components/Combat.h"
+#include "Components/CombatTypes.h"
 #include "Core/Constants.h"
 #include "Graphics/Animation.h"
 #include "Utils/ResourceManager.h"
@@ -28,27 +30,10 @@ protected:
 
 	Animation animation_;
 	Movement movement_;
+	Combat combat_;
 
 	float health_;
 	bool isAlive_;
-
-	//Attack
-	enum class AttackTypes {
-		basicAttack,
-		firstSkill,
-		secondSkill,
-		ultimate
-	};
-
-	AttackTypes attackTypes_;
-	sf::RectangleShape attackHitbox_;
-	bool isAttacking_;
-	bool hasPerformedAttack_;
-	float attackTimer_;
-	float attackDuration_;
-	float attackCooldown_;
-	float attackCooldownTimer_;
-	float attackDamage_;
 
 	//Shild
 	enum class ShildPhase {

@@ -15,10 +15,10 @@ Game::Game() : hud_(resourceManager_)
 
 	background_ = sf::Sprite(resourceManager_.getTexture("Assets/Maps/Map1.png"));
 
-#if OFF
+#if ON
 	player1_ = std::make_unique<Samurai>(resourceManager_);
 #endif
-#if ON
+#if OFF
 	player1_ = std::make_unique<Wizard>(resourceManager_);
 #endif
 #if OFF
@@ -26,10 +26,10 @@ Game::Game() : hud_(resourceManager_)
 #endif
 
 
-#if ON
+#if OFF
 	player2_ = std::make_unique<Goblin>(resourceManager_);
 #endif
-#if OFF
+#if ON
 	player2_ = std::make_unique<Samurai>(resourceManager_);
 #endif
 
